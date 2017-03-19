@@ -31,31 +31,39 @@ Training method:
 
 ```
 $ sent2vec -input train.txt -output model
-```
 
 The following arguments are mandatory:
   -input              training file path
   -output             output file path
 
-```
 The following arguments are optional:
-  -lr                 learning rate [0.1]
-  -dim                size of sentence vectors [100]
+  -lr                 learning rate [0.2]
+  -lrUpdateRate       change the rate of updates for the learning rate [100]
+  -dim                size of word vectors [100]
+  -ws                 size of the context window [5]
   -epoch              number of epochs [5]
-  -minCount           minimal number of word occurences [1]
-  -neg                number of negatives sampled [5]
-  -wordNgrams         max length of word n-gram [1]
+  -minCount           minimal number of word occurences [5]
+  -minCountLabel      minimal number of label occurences [0]
+  -neg                number of negatives sampled [10]
+  -wordNgrams         max length of word ngram [2]
   -loss               loss function {ns, hs, softmax} [ns]
   -bucket             number of buckets [2000000]
   -minn               min length of char ngram [0]
   -maxn               max length of char ngram [0]
-  -thread             number of threads [12]
+  -thread             number of threads [2]
   -t                  sampling threshold [0.0001]
+  -label              labels prefix [__label__]
+  -dropoutK           number of ngrams dropped when training a sent2vec model [2]
   -verbose            verbosity level [2]
   -pretrainedVectors  pretrained word vectors for supervised learning []
-  -dropout            probability used to discard n-grams [0.0]
+  -saveOutput         whether output params should be saved [0]
 ```
 
+An example of command:
+
+    ./fasttext sent2vec -input wiki_sentences.txt -output my_model -minCount 8 -dim 700 -epoch 9 -lr 0.2 -wordNgrams 2 -loss ns -neg 10 -thread 20 -t 0.000005 -dropoutK 4 -minCountLabel 20 -bucket 4000000
+    
+The input file consists in a simple textfile with one sentence per line. 
 
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
