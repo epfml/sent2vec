@@ -16,21 +16,30 @@ Our code builds upon [Facebook's FastText library](https://github.com/facebookre
 Given some existing model `model.bin` and arbitrary input text (one sentence per line), here is how to generate the sentence features:
 
 ```
-$ print-vectors model.bin < text.txt
+./fasttext print-vectors model.bin < text.txt
 ```
 
 This will output word vectors to the standard output, one vector per line.
 This can also be used with pipes:
 
 ```
-$ cat text.txt | print-vectors model.bin
+cat text.txt | ./fasttext print-vectors model.bin
 ```
+
+Be sure to apply the same preprocessing pipeline used for training to your input text!
 
 # Training New Models
-Training method:
+
+To train a new sent2vec model, you first need some training data file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself. 
+
+You can then train a new model. Here is one example of command:
+
+    ./fasttext sent2vec -input wiki_sentences.txt -output my_model -minCount 8 -dim 700 -epoch 9 -lr 0.2 -wordNgrams 2 -loss ns -neg 10 -thread 20 -t 0.000005 -dropoutK 4 -minCountLabel 20 -bucket 4000000
+
+Here is a description of all available arguments:
 
 ```
-$ sent2vec -input train.txt -output model
+sent2vec -input train.txt -output model
 
 The following arguments are mandatory:
   -input              training file path
@@ -59,11 +68,7 @@ The following arguments are optional:
   -saveOutput         whether output params should be saved [0]
 ```
 
-An example of command:
-
-    ./fasttext sent2vec -input wiki_sentences.txt -output my_model -minCount 8 -dim 700 -epoch 9 -lr 0.2 -wordNgrams 2 -loss ns -neg 10 -thread 20 -t 0.000005 -dropoutK 4 -minCountLabel 20 -bucket 4000000
-    
-The input file consists in a simple textfile with one sentence per line. 
+Some of those arguments are not useful to train sent2vec models: `ws`, `minn`, `maxn` and `label`.
 
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
