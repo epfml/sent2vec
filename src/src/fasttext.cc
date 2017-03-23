@@ -160,21 +160,17 @@ void FastText::skipgram(Model& model, real lr,
   }
 }
 
-void FastText::sent2vec(Model& model, real lr, const std::vector<int32_t>& line) {
+void FastText::sent2vec(Model& model, real lr, const std::vector<int32_t>& line){
   if (line.size() <= 1) return;
-  std::vector<int32_t> context(line);
+  std::vector<int32_t> context;
   std::uniform_real_distribution<> uniform(0, 1);
-  bool previousSelected = false;
-  for (int32_t i=0; i<line.size(); ++i) {
-    if (previousSelected) context[i-1] = line[i-1];
-    if (uniform(model.rng) > dict_->getPDiscard(line[i]) || dict_->getCount(line[i]) < args_->minCountLabel)
+  for (int32_t i=0; i<line.size(); ++i){
+    if (uniform(model.rng) > dict_->getPDiscard(line[i]) || dict_->getTokenCount(line[i]) < args_->minCountLabel)
       continue;
-    previousSelected = true;
+    context = line;
     context[i] = 0;
-    if (args_->wordNgrams > 1)
-      dict_->addNgrams(context, args_->wordNgrams, args_->dropoutK, model.rng);
+    dict_->addNgrams(context, args_->wordNgrams, args_->dropoutK, model.rng);
     model.update(context, line[i], lr);
-    if (args_->wordNgrams > 1) context.resize(line.size());
   }
 }
 

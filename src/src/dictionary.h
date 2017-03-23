@@ -61,7 +61,7 @@ class Dictionary {
     int64_t ntokens() const;
     real getPDiscard(int32_t) const;
     int32_t getId(const std::string&) const;
-    int64_t getCount(int32_t) const;
+    int64_t getTokenCount(int32_t) const;
     entry_type getType(int32_t) const;
     bool discard(int32_t, real) const;
     std::string getWord(int32_t) const;

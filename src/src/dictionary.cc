@@ -126,7 +126,7 @@ std::string Dictionary::getWord(int32_t id) const {
   return words_[id].word;
 }
 
-int64_t Dictionary::getCount(int32_t id) const {
+int64_t Dictionary::getTokenCount(int32_t id) const {
     assert(id >= 0);
     assert(id < size_);
     return words_[id].count;
@@ -286,8 +286,12 @@ void Dictionary::threshold(int64_t t, int64_t tl) {
 void Dictionary::initTableDiscard() {
   pdiscard_.resize(size_);
   for (size_t i = 0; i < size_; i++) {
-    real f = real(words_[i].count) / real(ntokens_);
-    pdiscard_[i] = sqrt(args_->t / f) + args_->t / f;
+    if (words_[i].count == 0){
+      pdiscard_[i] = 1; //always discard
+    } else {
+      real f = real(words_[i].count) / real(ntokens_);
+      pdiscard_[i] = sqrt(args_->t / f) + args_->t / f;
+    }
   }
 }
 
@@ -348,6 +352,7 @@ int32_t Dictionary::getLine(std::istream& in,
     in.seekg(std::streampos(0));
   }
   while (readWord(in, token)) {
+    if (token == EOS) break;
     int32_t wid = getId(token);
     if (wid < 0) continue;
     entry_type type = getType(wid);
@@ -360,7 +365,7 @@ int32_t Dictionary::getLine(std::istream& in,
     }
     if (words.size() > MAX_LINE_SIZE && args_->model != model_name::sup &&
         args_->model != model_name::sent2vec) break;
-    if (token == EOS) break;
+    //if (token == EOS) break;
   }
   return ntokens;
 }
