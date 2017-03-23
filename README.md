@@ -3,14 +3,10 @@ This library provides unsupervised sentence representations (features) for short
 
 The method uses a simple but efficient unsupervised objective to train distributed representations of sentences. The algorithm outperforms the state-of-the-art unsupervised models on most benchmark tasks, and on many tasks even beats supervised models, highlighting the robustness of the produced sentence embeddings, see [*the paper*](https://arxiv.org/abs/1703.02507) for more details.
 
-TODO: add more details?
-
-TODO: add code
-
-
 # Setup & Requirements
 Our code builds upon [Facebook's FastText library](https://github.com/facebookresearch/fastText), see also their nice documentation and python interfaces.
 
+To compile the library, simply run a `make` command from the `src` folder.
 
 # Generating Features from Pre-Trained Models
 Given some existing model `model.bin` and arbitrary input text (one sentence per line), here is how to generate the sentence features:
@@ -30,7 +26,7 @@ Be sure to apply the same preprocessing pipeline used for training to your input
 
 # Training New Models
 
-To train a new sent2vec model, you first need some training data file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself. 
+To train a new sent2vec model, you first need some training data file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself.
 
 You can then train a new model. Here is one example of command:
 
@@ -49,7 +45,6 @@ The following arguments are optional:
   -lr                 learning rate [0.2]
   -lrUpdateRate       change the rate of updates for the learning rate [100]
   -dim                size of word vectors [100]
-  -ws                 size of the context window [5]
   -epoch              number of epochs [5]
   -minCount           minimal number of word occurences [5]
   -minCountLabel      minimal number of label occurences [0]
@@ -57,18 +52,11 @@ The following arguments are optional:
   -wordNgrams         max length of word ngram [2]
   -loss               loss function {ns, hs, softmax} [ns]
   -bucket             number of buckets [2000000]
-  -minn               min length of char ngram [0]
-  -maxn               max length of char ngram [0]
   -thread             number of threads [2]
   -t                  sampling threshold [0.0001]
-  -label              labels prefix [__label__]
   -dropoutK           number of ngrams dropped when training a sent2vec model [2]
   -verbose            verbosity level [2]
-  -pretrainedVectors  pretrained word vectors for supervised learning []
-  -saveOutput         whether output params should be saved [0]
 ```
-
-Some of those arguments are not useful to train sent2vec models: `ws`, `minn`, `maxn` and `label`.
 
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
@@ -86,4 +74,3 @@ When using this code or some of our pre-trained models for your application, ple
   year = {2017}
 }
 ```
-
