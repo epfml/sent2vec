@@ -1,5 +1,5 @@
 # sent2vec
-This library provides unsupervised sentence representations (features) for short texts, which can be used as features as input to any machine learning task later on.
+TLDR: This library delivers numerical representations (features) for short texts or sentences, which can be used as input to any machine learning task later on. Think of it as an unsupervised version of [FastText](https://github.com/facebookresearch/fastText), and an extension of CBOW to sentences.
 
 The method uses a simple but efficient unsupervised objective to train distributed representations of sentences. The algorithm outperforms the state-of-the-art unsupervised models on most benchmark tasks, and on many tasks even beats supervised models, highlighting the robustness of the produced sentence embeddings, see [*the paper*](https://arxiv.org/abs/1703.02507) for more details.
 
@@ -9,24 +9,24 @@ Our code builds upon [Facebook's FastText library](https://github.com/facebookre
 To compile the library, simply run a `make` command from the `src` folder.
 
 # Generating Features from Pre-Trained Models
-Given some existing model `model.bin` and arbitrary input text (one sentence per line), here is how to generate the sentence features:
+Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. The input text file needs to be provided as one sentence per line.
 
 ```
 ./fasttext print-vectors model.bin < text.txt
 ```
 
-This will output word vectors to the standard output, one vector per line.
+This will output sentence vectors (the features for each input sentence) to the standard output, one vector per line.
 This can also be used with pipes:
 
 ```
 cat text.txt | ./fasttext print-vectors model.bin
 ```
 
-Be sure to apply the same preprocessing pipeline used for training to your input text!
+Before using, make sure to apply the same text preprocessing pipeline as used for training to your input text! TODO: link for preprocessing as in pre-trained models.
 
 # Training New Models
 
-To train a new sent2vec model, you first need some training data file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself.
+To train a new sent2vec model, you first need some large training text file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself.
 
 You can then train a new model. Here is one example of command:
 
@@ -44,14 +44,14 @@ The following arguments are mandatory:
 The following arguments are optional:
   -lr                 learning rate [0.2]
   -lrUpdateRate       change the rate of updates for the learning rate [100]
-  -dim                size of word vectors [100]
+  -dim                dimension of word and sentence vectors [100]
   -epoch              number of epochs [5]
   -minCount           minimal number of word occurences [5]
   -minCountLabel      minimal number of label occurences [0]
   -neg                number of negatives sampled [10]
   -wordNgrams         max length of word ngram [2]
   -loss               loss function {ns, hs, softmax} [ns]
-  -bucket             number of buckets [2000000]
+  -bucket             number of hash buckets for vocabulary [2000000]
   -thread             number of threads [2]
   -t                  sampling threshold [0.0001]
   -dropoutK           number of ngrams dropped when training a sent2vec model [2]
