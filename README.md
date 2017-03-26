@@ -24,6 +24,15 @@ cat text.txt | ./fasttext print-vectors model.bin
 
 Before using, make sure to apply the same text preprocessing pipeline as used for training to your input text! TODO: link for preprocessing as in pre-trained models.
 
+### Downloading Pre-Trained Models
+
+- [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on wikipedia)
+- [sent2vec_wiki_bigrams](https://drive.google.com/uc?export=download&confirm=IcCE&id=0BwblUWuN_Bn9RURIYXNKeE5qS1U) 16GB (700dim, trained on wikipedia)
+- [sent2vec_twitter_unigrams](https://drive.google.com/uc?export=download&confirm=D2U1&id=0BwblUWuN_Bn9RkdEZkJwQWs4WmM) 13GB (700dim, trained on tweets)
+- [sent2vec_twitter_bigrams](https://drive.google.com/uc?export=download&confirm=BheQ&id=0BwblUWuN_Bn9VTEyUzA2ZFNmVWM) 23GB (700dim, trained on tweets)
+
+(as used in the arXiv paper)
+
 # Training New Models
 
 To train a new sent2vec model, you first need some large training text file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself.
