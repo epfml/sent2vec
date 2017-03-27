@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import sys
 from nltk.tokenize import StanfordTokenizer
@@ -16,7 +16,7 @@ def tokenize(tknzr, sentence, to_lower=True):
     if to_lower:
         sentence = sentence.lower()
     sentence = re.sub('((www\.[^\s]+)|(https?://[^\s]+)|(http?://[^\s]+))','<url>',sentence) #replace urls by <url>
-    sentence = re.sub('(\@[^\s]+)','<user>',sentence) #replace @user268 by <user>
+    sentence = re.sub('(\@ [^\s]+)','<user>',sentence) #replace @user268 by <user>
     filter(lambda word: ' ' not in word, sentence)
     return sentence
 
@@ -50,8 +50,7 @@ def tokenize_sentences(tknzr, sentences, to_lower=True):
 
 fileName = sys.argv[1]
 
-BASE_SNLP_PATH = "/home/path/to/stanford_NLP/stanford-postagger-2016-10-31/"
-SNLP_TAGGER_JAR = os.path.join(BASE_SNLP_PATH, "stanford-postagger.jar")
+SNLP_TAGGER_JAR = "/home/pgupta/stanford-postagger.jar"
 
 
 sentences = []
