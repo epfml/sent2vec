@@ -1,66 +1,58 @@
-#!/usr/bin/python2
-
+import glob
+from multiprocessing import Pool
 import sys
-from nltk.tokenize import TweetTokenizer
+from nltk import TweetTokenizer
+import os
 import re
+import codecs
 
-def tokenize(tknzr, sentence, to_lower=True):
-    """Arguments:
-        - tknzr: a tokenizer implementing the NLTK tokenizer interface
-        - sentence: a string to be tokenized
-        - to_lower: lowercasing or not
-    """
-    sentence = sentence.strip()
-    sentence = ' '.join([format_token(x) for x in tknzr.tokenize(sentence)])
-    if to_lower:
-        sentence = sentence.lower()
-    sentence = re.sub('((www\.[^\s]+)|(https?://[^\s]+)|(http?://[^\s]+))','<url>',sentence) #replace urls by <url>
-    sentence = re.sub('(\@[^\s]+)','<user>',sentence) #replace @user268 by <user>
-    filter(lambda word: ' ' not in word, sentence)
-    return sentence
+def preprocess_tweet(tweet):
+    tweet = tweet.lower()
+    tweet = re.sub('((www\.[^\s]+)|(https?://[^\s]+)|(http?://[^\s]+))','<url>',tweet)
+    tweet = re.sub('(\@[^\s]+)','<user>',tweet)
+    try:
+        tweet = tweet.decode('unicode_escape').encode('ascii','ignore')
+    except:
+        pass
+    return tweet
 
-def format_token(token):
-    """"""
-    if token == '-LRB-':
-        token = '('
-    elif token == '-RRB-':
-        token = ')'
-    elif token == '-RSB-':
-        token = ']'
-    elif token == '-LSB-':
-        token = '['
-    elif token == '-LCB-':
-        token = '{'
-    elif token == '-RCB-':
-        token = '}'
-    return token
+def tokenize_tweets(filename, dest_folder):
+    basename = os.path.basename(filename)
+    dest = os.path.join(dest_folder, basename + '.tok')
+    print("processing %s" % basename)
+    tknzr = TweetTokenizer()
+    with codecs.open(dest, 'w', "utf-8") as out_fs:
+        with open(filename, 'r', encoding="utf-8") as in_fs:
+            for line in in_fs:
+                try:
+                    language, id, timestamp, username, tweet = line.strip().split('\t')
+                except:
+                    print("could not parse line.")
+                    continue
+                if language != 'en':
+                    continue
+                tweet = tknzr.tokenize(tweet)
+                if not 6 < len(tweet) < 110:
+                    continue
+                tweet = preprocess_tweet(' '.join(tweet))
+                filter(lambda word: ' ' not in word, tweet)
+                out_fs.write(id+'\t'+timestamp+'\t'+username+'\t'+tweet+'\n')
 
-def tokenize_sentences(tknzr, sentences, to_lower=True):
-    """Arguments:
-        - tknzr: a tokenizer implementing the NLTK tokenizer interface
-        - sentences: a list of sentences
-        - to_lower: lowercasing or not
-
-    """
-    
-    return [tokenize(tknzr, s, to_lower) for s in sentences]
-
-
+def main():
+    if len(sys.argv) != 4:
+        print("Usage: python3 tweetTokenize.py <tweets_folder> <dest_folder> <num_process>")
+        sys.exit(-1)
+    tweets_folder = sys.argv[1]
+    dest_folder = sys.argv[2]
+    num_process = int(sys.argv[3])
+    tweets_filenames = glob.glob(os.path.join(tweets_folder, '*'))
+    tweets_filenames = [(f, dest_folder) for f in tweets_filenames]
+    if num_process == 1:
+        for f, dest_folder in tweets_filenames:
+            tokenize_tweets(f, dest_folder)
+    else:
+        pool = Pool(num_process)
+        pool.starmap(tokenize_tweets, tweets_filenames)
 
 if __name__ == "__main__":
-    
-    fileName = sys.argv[1]
-
-    tknzr = TweetTokenizer()
-
-    sentences = []
-    with open(fileName, 'r') as fileinput:
-       for line in fileinput:
-           sentences.append(line)
-
-           
-    tknzr = TweetTokenizer()
-    tokenized_sentences_NLTK_tweets = tokenize_sentences(tknzr, sentences)
-
-    for sentence in tokenized_sentences_NLTK_tweets:
-        print (sentence)
+    main()
