@@ -40,26 +40,27 @@ def tokenize_sentences(tknzr, sentences, to_lower=True):
         - tknzr: a tokenizer implementing the NLTK tokenizer interface
         - sentences: a list of sentences
         - to_lower: lowercasing or not
+
     """
+    
     return [tokenize(tknzr, s, to_lower) for s in sentences]
 
 
 
+if __name__ == "__main__":
+    
+    fileName = sys.argv[1]
 
+    tknzr = TweetTokenizer()
 
-fileName = sys.argv[1]
+    sentences = []
+    with open(fileName, 'r') as fileinput:
+       for line in fileinput:
+           sentences.append(line)
 
-from nltk.tokenize import TweetTokenizer
-tknzr = TweetTokenizer()
+           
+    tknzr = TweetTokenizer()
+    tokenized_sentences_NLTK_tweets = tokenize_sentences(tknzr, sentences)
 
-
-sentences = []
-with open(fileName, 'r') as fileinput:
-   for line in fileinput:
-       sentences.append(line)
-
-tknzr = TweetTokenizer()
-tokenized_sentences_NLTK_tweets = tokenize_sentences(tknzr, sentences)
-
-for sentence in tokenized_sentences_NLTK_tweets:
-    print (sentence)
+    for sentence in tokenized_sentences_NLTK_tweets:
+        print (sentence)

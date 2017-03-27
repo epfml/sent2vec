@@ -1,8 +1,9 @@
 #!/usr/bin/python2
 
 import sys
-from nltk.tokenize import TweetTokenizer
+from nltk.tokenize import StanfordTokenizer
 import re
+import os
 
 def tokenize(tknzr, sentence, to_lower=True):
     """Arguments:
@@ -49,8 +50,8 @@ def tokenize_sentences(tknzr, sentences, to_lower=True):
 
 fileName = sys.argv[1]
 
-from nltk.tokenize import TweetTokenizer
-tknzr = TweetTokenizer()
+BASE_SNLP_PATH = "/home/path/to/stanford_NLP/stanford-postagger-2016-10-31/"
+SNLP_TAGGER_JAR = os.path.join(BASE_SNLP_PATH, "stanford-postagger.jar")
 
 
 sentences = []
