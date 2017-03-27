@@ -68,11 +68,18 @@ The following arguments are optional:
 ```
 
 # Tokenizing
-In order to get the tokenized sentences, 
-run tweet(wiki)Tokenize.py Filename > outFile to get the sentences in a tokenized form.
+In order to get the tokenized sentences, run 
+
+```
+tweet(wiki)Tokenize.py Filename > outFile
+```
+
+to get the sentences in a tokenized form.
+
 NOTE : Set the BASE_SNLP_PATH and SNLP_TAGGER_JAR correctly for wikiTokenize.py 
 SNLP_TAGGER_JAR is the address of stanford-postagger.jar which you can download from 
 http://www.java2s.com/Code/Jar/s/Downloadstanfordpostaggerjar.htm
+
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
 
