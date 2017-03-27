@@ -1,5 +1,5 @@
 # sent2vec
-TLDR: This library delivers numerical representations (features) for short texts or sentences, which can be used as input to any machine learning task later on. Think of it as an unsupervised version of [FastText](https://github.com/facebookresearch/fastText), and an extension of CBOW to sentences.
+TLDR: This library delivers numerical representations (features) for short texts or sentences, which can be used as input to any machine learning task later on. Think of it as an unsupervised version of [FastText](https://github.com/facebookresearch/fastText), and an extension of word2vec (CBOW) to sentences.
 
 The method uses a simple but efficient unsupervised objective to train distributed representations of sentences. The algorithm outperforms the state-of-the-art unsupervised models on most benchmark tasks, and on many tasks even beats supervised models, highlighting the robustness of the produced sentence embeddings, see [*the paper*](https://arxiv.org/abs/1703.02507) for more details.
 
@@ -22,8 +22,6 @@ This can also be used with pipes:
 cat text.txt | ./fasttext print-vectors model.bin
 ```
 
-Before using, make sure to apply the same text preprocessing pipeline as used for training to your input text! TODO: link for preprocessing as in pre-trained models.
-
 ### Downloading Pre-Trained Models
 
 - [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on wikipedia)
@@ -33,9 +31,22 @@ Before using, make sure to apply the same text preprocessing pipeline as used fo
 
 (as used in the arXiv paper)
 
+### Tokenizing
+Both feature generation as above and also training as below do require that the input texts (sentences) are already tokenized. To tokenize and preprocess text for the above models, you can use
+
+```
+python3 tweetTokenize.py <tweets_folder> <dest_folder> <num_process>
+```
+
+for tweets, or then the following for wikipedia:
+```
+python3 wikiTokenize.py corpora > destinationFile
+```
+NOTE: For `wikiTokenize.py`, set the `SNLP_TAGGER_JAR` parameter to be the path of `stanford-postagger.jar` which you can download [here](http://www.java2s.com/Code/Jar/s/Downloadstanfordpostaggerjar.htm)
+
 # Training New Models
 
-To train a new sent2vec model, you first need some large training text file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself.
+To train a new sent2vec model, you first need some large training text file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself, see above.
 
 You can then train a new model. Here is one example of command:
 
@@ -66,23 +77,6 @@ The following arguments are optional:
   -dropoutK           number of ngrams dropped when training a sent2vec model [2]
   -verbose            verbosity level [2]
 ```
-
-# Tokenizing
-In order to get the tokenized sentences for tweets, run 
-
-```
-python3 tweetTokenize.py <tweets_folder> <dest_folder> <num_process>
-```
-
-to get the sentences in a tokenized form.
-
-For tokenized sentences for wiki, run
-```
-python3 wikiTokenize.py corpora > destinationFile
-```
-NOTE : Set the SNLP_TAGGER_JAR correctly for wikiTokenize.py .
-
-SNLP_TAGGER_JAR is the address of stanford-postagger.jar which you can download from http://www.java2s.com/Code/Jar/s/Downloadstanfordpostaggerjar.htm
 
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
