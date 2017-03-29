@@ -9,7 +9,7 @@ Our code builds upon [Facebook's FastText library](https://github.com/facebookre
 To compile the library, simply run a `make` command from the `src` folder.
 
 # Generating Features from Pre-Trained Models
-Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. The input text file needs to be provided as one sentence per line.
+Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. If you choose to download and use one of our models, you can use the python code provided in the `get_sentence_embeddings_from_pre-trained_models` notebook. It handles tokenization and can be given raw sentences. An alternative to this code would be to directly use the `print-vectors` command, the input text file needs to be provided as one sentence per line:
 
 ```
 ./fasttext print-vectors model.bin < text.txt
