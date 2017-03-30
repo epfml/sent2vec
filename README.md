@@ -6,7 +6,7 @@ The method uses a simple but efficient unsupervised objective to train distribut
 # Setup & Requirements
 Our code builds upon [Facebook's FastText library](https://github.com/facebookresearch/fastText), see also their nice documentation and python interfaces.
 
-To compile the library, simply run a `make` command from the `src` folder.
+To compile the library, simply run a `make` command.
 
 # Generating Features from Pre-Trained Models
 Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. If you choose to download and use one of our models, you can use the python code provided in the `get_sentence_embeddings_from_pre-trained_models` notebook. It handles tokenization and can be given raw sentences. An alternative to this code would be to directly use the `print-vectors` command, the input text file needs to be provided as one sentence per line:
