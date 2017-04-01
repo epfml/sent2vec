@@ -24,10 +24,10 @@ cat text.txt | ./fasttext print-vectors model.bin
 
 ### Downloading Pre-Trained Models
 
-- [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on wikipedia)
-- [sent2vec_wiki_bigrams](https://drive.google.com/uc?export=download&confirm=IcCE&id=0BwblUWuN_Bn9RURIYXNKeE5qS1U) 16GB (700dim, trained on wikipedia)
-- [sent2vec_twitter_unigrams](https://drive.google.com/uc?export=download&confirm=D2U1&id=0BwblUWuN_Bn9RkdEZkJwQWs4WmM) 13GB (700dim, trained on tweets)
-- [sent2vec_twitter_bigrams](https://drive.google.com/uc?export=download&confirm=BheQ&id=0BwblUWuN_Bn9VTEyUzA2ZFNmVWM) 23GB (700dim, trained on tweets)
+- [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on english wikipedia)
+- [sent2vec_wiki_bigrams](https://drive.google.com/uc?export=download&confirm=IcCE&id=0BwblUWuN_Bn9RURIYXNKeE5qS1U) 16GB (700dim, trained on english wikipedia)
+- [sent2vec_twitter_unigrams](https://drive.google.com/uc?export=download&confirm=D2U1&id=0BwblUWuN_Bn9RkdEZkJwQWs4WmM) 13GB (700dim, trained on english tweets)
+- [sent2vec_twitter_bigrams](https://drive.google.com/uc?export=download&confirm=BheQ&id=0BwblUWuN_Bn9VTEyUzA2ZFNmVWM) 23GB (700dim, trained on english tweets)
 
 (as used in the arXiv paper)
 
