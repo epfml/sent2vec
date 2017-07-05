@@ -39,14 +39,17 @@ k is optional and is the number of nearest sentences that you want to output.
 
 
 ### Downloading Pre-Trained Models
-These models are not compatible with the current commit. Use [this release](https://github.com/epfml/sent2vec/releases/tag/v1) to make use of these models. We will be putting the links to the compatible models soon.
 
-- [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on english wikipedia)
-- [sent2vec_wiki_bigrams](https://drive.google.com/uc?export=download&confirm=IcCE&id=0BwblUWuN_Bn9RURIYXNKeE5qS1U) 16GB (700dim, trained on english wikipedia)
-- [sent2vec_twitter_unigrams](https://drive.google.com/uc?export=download&confirm=D2U1&id=0BwblUWuN_Bn9RkdEZkJwQWs4WmM) 13GB (700dim, trained on english tweets)
-- [sent2vec_twitter_bigrams](https://drive.google.com/uc?export=download&confirm=BheQ&id=0BwblUWuN_Bn9VTEyUzA2ZFNmVWM) 23GB (700dim, trained on english tweets)
+- [sent2vec_wiki_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSa19uYWlLUEkzX3c) 5GB (600dim, trained on english wikipedia)
+- [sent2vec_wiki_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSaER5YkJUdWdPWU0) 16GB (700dim, trained on english wikipedia)
+- [sent2vec_twitter_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSaVFLM0xJNk9DTzg) 13GB (700dim, trained on english tweets)
+- [sent2vec_twitter_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSeHI4cmdQdXpTRHc) 23GB (700dim, trained on english tweets)
+- [sent2vec_toronto books_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSOWdGM0tOX1lUNEk) 2GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
+- [sent2vec_toronto books_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSdENLSEhrdWprQ0k) 7GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
 
 (as used in the arXiv paper)
+
+Note: users who downloaded models prior to [this release](https://github.com/epfml/sent2vec/releases/tag/v1) will encounter compatibility issues when trying to use the old models with the latest commit. Those users can still use the code in the release to keep using old models. 
 
 ### Tokenizing
 Both feature generation as above and also training as below do require that the input texts (sentences) are already tokenized. To tokenize and preprocess text for the above models, you can use
