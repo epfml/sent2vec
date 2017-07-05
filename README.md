@@ -9,6 +9,7 @@ Our code builds upon [Facebook's FastText library](https://github.com/facebookre
 To compile the library, simply run a `make` command.
 
 # Generating Features from Pre-Trained Models
+
 Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. To generate the features, use the `print-sentence-vectors` command and the input text file needs to be provided as one sentence per line:
 
 ```
@@ -21,6 +22,9 @@ This can also be used with pipes:
 ```
 cat text.txt | ./fasttext print-sentence-vectors model.bin
 ```
+
+If you decide to download and use one of our models, it is also possible to use the python code provided in the `get_sentence_embeddings_from_pre-trained_models` notebook. It handles tokenization and can be given raw sentences. 
+
 # Using Sentence level nearest neighbour search and analogies
 Given a pre-trained model `model.bin` , here is how to use these features. For the nearest neighbouring sentence feature, you need the model as well as a corpora in which you can search for the nearest neighbouring sentence to your input sentence. We use cosine distance as our distance metric. To do so, we use the command `nnSent` and the input should be 1 sentence per line:
 
@@ -35,8 +39,6 @@ For the analogiesSent, the user inputs 3 sentences A,B and C and finds a sentenc
 ```
 
 k is optional and is the number of nearest sentences that you want to output.     
-
-
 
 ### Downloading Pre-Trained Models
 
@@ -62,7 +64,7 @@ for tweets, or then the following for wikipedia:
 ```
 python3 wikiTokenize.py corpora > destinationFile
 ```
-NOTE: For `wikiTokenize.py`, set the `SNLP_TAGGER_JAR` parameter to be the path of `stanford-postagger.jar` which you can download [here](http://www.java2s.com/Code/Jar/s/Downloadstanfordpostaggerjar.htm)
+Note: For `wikiTokenize.py`, set the `SNLP_TAGGER_JAR` parameter to be the path of `stanford-postagger.jar` which you can download [here](http://www.java2s.com/Code/Jar/s/Downloadstanfordpostaggerjar.htm)
 
 # Training New Models
 
