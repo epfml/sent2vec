@@ -9,10 +9,10 @@ Our code builds upon [Facebook's FastText library](https://github.com/facebookre
 To compile the library, simply run a `make` command.
 
 # Generating Features from Pre-Trained Models
-Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. If you choose to download and use one of our models, you can use the python code provided in the `get_sentence_embeddings_from_pre-trained_models` notebook. It handles tokenization and can be given raw sentences. An alternative to this code would be to directly use the `print-vectors` command, the input text file needs to be provided as one sentence per line:
+Given a pre-trained model `model.bin` (download links see below), here is how to generate the sentence features for an input text. To generate the features, use the `print-sentence-vectors` command and the input text file needs to be provided as one sentence per line:
 
 ```
-./fasttext print-vectors model.bin < text.txt
+./fasttext print-sentence-vectors model.bin < text.txt
 ```
 
 This will output sentence vectors (the features for each input sentence) to the standard output, one vector per line.
@@ -21,8 +21,25 @@ This can also be used with pipes:
 ```
 cat text.txt | ./fasttext print-vectors model.bin
 ```
+# Using Sentence level nearest neighbour search and analogies
+Given a pre-trained model `model.bin` , here is how to use these features. For the nearest neighbouring sentence feature, you need the model as well as a corpora in which you can search for the nearest neighbouring sentence to your input sentence. We use cosine distance as our distance metric. To do so, we use the command `nnSent` and the input should be 1 sentence per line:
+
+```
+./fasttext nnSent model.bin corpora [k] 
+```
+k is optional and is the number of nearest sentences that you want to output.     
+
+For the analogiesSent, the user inputs 3 sentences A,B and C and finds a sentence from the corpora which is the closest to D in the A:B::C:D analogy pattern.
+```
+./fasttext analogiesSent model.bin corpora [k]
+```
+
+k is optional and is the number of nearest sentences that you want to output.     
+
+
 
 ### Downloading Pre-Trained Models
+These models are not compatible with the current commit. Use [this release](https://github.com/epfml/sent2vec/releases/tag/v1) to make use of these models. We will be putting the links to the compatible models soon.
 
 - [sent2vec_wiki_unigrams](https://drive.google.com/uc?export=download&confirm=FHHw&id=0BwblUWuN_Bn9akZpdVg0Qk8zbGs) 5GB (600dim, trained on english wikipedia)
 - [sent2vec_wiki_bigrams](https://drive.google.com/uc?export=download&confirm=IcCE&id=0BwblUWuN_Bn9RURIYXNKeE5qS1U) 16GB (700dim, trained on english wikipedia)
