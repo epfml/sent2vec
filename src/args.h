@@ -47,6 +47,12 @@ class Args {
     std::string pretrainedVectors;
     int saveOutput;
 
+    bool qout;
+    bool retrain;
+    bool qnorm;
+    size_t cutoff;
+    size_t dsub;
+
     void parseArgs(int, char**);
     void printHelp();
     void save(std::ostream&);
