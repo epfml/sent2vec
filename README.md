@@ -19,7 +19,7 @@ This will output sentence vectors (the features for each input sentence) to the 
 This can also be used with pipes:
 
 ```
-cat text.txt | ./fasttext print-vectors model.bin
+cat text.txt | ./fasttext print-sentence-vectors model.bin
 ```
 # Using Sentence level nearest neighbour search and analogies
 Given a pre-trained model `model.bin` , here is how to use these features. For the nearest neighbouring sentence feature, you need the model as well as a corpora in which you can search for the nearest neighbouring sentence to your input sentence. We use cosine distance as our distance metric. To do so, we use the command `nnSent` and the input should be 1 sentence per line:
