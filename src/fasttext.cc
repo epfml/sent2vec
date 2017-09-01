@@ -450,20 +450,20 @@ void FastText::printSentenceVectors() {
 void FastText::precomputeWordVectors(Matrix& wordVectors) {
   Vector vec(args_->dim);
   wordVectors.zero();
-  std::cout << "Pre-computing word vectors...";
+  std::cerr << "Pre-computing word vectors...";
   for (int32_t i = 0; i < dict_->nwords(); i++) {
     std::string word = dict_->getWord(i);
     getVector(vec, word);
     real norm = vec.norm();
     wordVectors.addRow(vec, i, 1.0 / norm);
   }
-  std::cout << " done." << std::endl;
+  std::cerr << " done." << std::endl;
 }
 
 void FastText::precomputeSentenceVectors(Matrix& sentenceVectors,std::ifstream& in) {
   Vector vec(args_->dim);
   sentenceVectors.zero();
-  std::cout << "Pre-computing sentence vectors...";
+  std::cerr << "Pre-computing sentence vectors...";
   std::vector<int32_t> line;
   std::vector<int32_t> labels;
   int32_t i = 0;
@@ -481,7 +481,7 @@ void FastText::precomputeSentenceVectors(Matrix& sentenceVectors,std::ifstream& 
     sentenceVectors.addRow(vec, i, 1.0 / norm);
     i++;
   }
-  std::cout << " done." << std::endl;
+  std::cerr << " done." << std::endl;
 }
 
 void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
@@ -538,7 +538,7 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
 //	std::cout << i << "i\n";
 	// beware, I removed here some if
     auto it = banSet.find(heap.top().second);
-      std::cout << heap.top().second << " " << heap.top().first << std::endl;
+      std::cout << heap.top().first << " " << heap.top().second << std::endl;
       i++;
     heap.pop();
   }
@@ -551,13 +551,13 @@ void FastText::nn(int32_t k) {
   Matrix wordVectors(dict_->nwords(), args_->dim);
   precomputeWordVectors(wordVectors);
   std::set<std::string> banSet;
-  std::cout << "Query word? ";
+  std::cerr << "Query word? ";
   while (std::cin >> queryWord) {
     banSet.clear();
     banSet.insert(queryWord);
     getVector(queryVec, queryWord);
     findNN(wordVectors, queryVec, k, banSet);
-    std::cout << "Query word? ";
+    std::cerr << "Query word? ";
   }
 }
 
@@ -567,7 +567,7 @@ void FastText::analogies(int32_t k) {
   Matrix wordVectors(dict_->nwords(), args_->dim);
   precomputeWordVectors(wordVectors);
   std::set<std::string> banSet;
-  std::cout << "Query triplet (A - B + C)? ";
+  std::cerr << "Query triplet (A - B + C)? ";
   while (true) {
     banSet.clear();
     query.zero();
@@ -585,7 +585,7 @@ void FastText::analogies(int32_t k) {
     query.addVector(buffer, 1.0);
 
     findNN(wordVectors, query, k, banSet);
-    std::cout << "Query triplet (A - B + C)? ";
+    std::cerr << "Query triplet (A - B + C)? ";
   }
 }
 
@@ -610,8 +610,8 @@ void FastText::nnSent(int32_t k, std::string filename) {
   precomputeSentenceVectors(sentenceVectors, in1);
   std::set<std::string> banSet;
 
-  std::cout << "Query sentence? ";
-  while (true) {
+  std::cerr << "Query sentence? ";
+  while (std::cin.peek() != EOF) {
     query.zero();
     dict_->getLine(std::cin, line, labels, model_->rng);
     buffer.zero();
@@ -624,7 +624,8 @@ void FastText::nnSent(int32_t k, std::string filename) {
     query.addVector(buffer, 1.0);
 
     findNNSent(sentenceVectors, query, k, banSet, n, sentences);
-    std::cout << "Query sentence? ";
+	std::cout << std::endl;
+    std::cerr << "Query sentence? ";
   }
 }
 
@@ -652,7 +653,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
 
   precomputeSentenceVectors(sentenceVectors, in1);
   std::set<std::string> banSet;
-  std::cout << "Query triplet sentences (A - B + C)? ";
+  std::cerr << "Query triplet sentences (A - B + C)? ";
   while (true) {
     banSet.clear();
     query.zero();
@@ -689,7 +690,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     query.addVector(buffer, 1.0);
 
     findNNSent(sentenceVectors, query, k, banSet, n, sentences);
-    std::cout << "Query triplet sentences (A - B + C)? ";
+    std::cerr << "Query triplet sentences (A - B + C)? ";
   }
 }
 
