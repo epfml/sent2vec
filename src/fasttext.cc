@@ -521,20 +521,25 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   std::priority_queue<std::pair<real, std::string>> heap;
   Vector vec(args_->dim);
 
+ // std::cout << numSent << "numSent\n";
+
   for (int32_t i = 0; i < numSent; i++) {
     std::string sentence = sentences[i];
     real dp = sentenceVectors.dotRow(queryVec, i);
+//	std::cout << i << " " << dp << "\n";
     heap.push(std::make_pair(dp / queryNorm, sentence));
   }
 
   int32_t i = 0;
 
+//  std::cout << "here!!! " << i << " " << heap.size() << " k is " << k << "\n";
+
   while (i < k && heap.size() > 0) {
+//	std::cout << i << "i\n";
+	// beware, I removed here some if
     auto it = banSet.find(heap.top().second);
-    if (it == banSet.end()) {
       std::cout << heap.top().second << " " << heap.top().first << std::endl;
       i++;
-    }
     heap.pop();
   }
 }
@@ -587,22 +592,20 @@ void FastText::analogies(int32_t k) {
 void FastText::nnSent(int32_t k, std::string filename) {  
   std::string sentence;
   std::ifstream in1(filename);
-  int64_t n;
-  in1 >> n;
+  int64_t n = 0;
 
   Vector buffer(args_->dim), query(args_->dim);
-  Matrix sentenceVectors(n+1, args_->dim);
   std::vector<std::string> sentences;
 
   std::vector<int32_t> line, labels;
   std::ifstream in2(filename);
 
-  in2 >> n;
-
   while (in2.peek() != EOF) {
         std::getline(in2, sentence);
         sentences.push_back(sentence);
+		n++;
   }
+  Matrix sentenceVectors(n+1, args_->dim);
 
   precomputeSentenceVectors(sentenceVectors, in1);
   std::set<std::string> banSet;
