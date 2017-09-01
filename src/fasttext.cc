@@ -19,6 +19,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <stdio.h>
 
 
 namespace fasttext {
@@ -522,7 +523,7 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   Vector vec(args_->dim);
 
   for (int32_t i = 0; i < numSent; i++) {
-    std::string sentence = sentences[i];
+	std::string sentence = std::to_string(i) + " " + sentences[i];
     real dp = sentenceVectors.dotRow(queryVec, i);
     heap.push(std::make_pair(dp / queryNorm, sentence));
   }
@@ -530,8 +531,13 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   int32_t i = 0;
   while (i < k && heap.size() > 0) {
     auto it = banSet.find(heap.top().second);
-	if (it == banSet.end()) {
-      std::cout << heap.top().first << " " << heap.top().second << std::endl;
+	if (
+		
+		//it == banSet.end() && 
+		!std::isnan(heap.top().first)) {
+      std::cout << heap.top().first << " " 
+				<< heap.top().second << " " 
+				<< std::endl;
       i++;
 	}
     heap.pop();
