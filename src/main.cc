@@ -102,6 +102,15 @@ void printNNUsage() {
     << std::endl;
 }
 
+void printNNSentUsage() {
+  std::cerr
+    << "usage: fasttext nnSent <model> <corpus> <k>\n\n"
+    << "  <model>      model filename\n"
+    << "  <corpus>     corpus filename\n"
+    << "  <k>          (optional; 10 by default) predict top k labels\n"
+    << std::endl;
+}
+
 void printAnalogiesUsage() {
   std::cout
     << "usage: fasttext analogies <model> <k>\n\n"
@@ -224,7 +233,7 @@ void nnSent(int argc, char** argv) {
   } else if (argc == 5) {
     k = atoi(argv[4]);
   } else {
-    printNNUsage();
+    printNNSentUsage();
     exit(EXIT_FAILURE);
   }
   FastText fasttext;
