@@ -222,7 +222,7 @@ void nnSent(int argc, char** argv) {
   if (argc == 4) {
     k = 10;
   } else if (argc == 5) {
-    k = atoi(argv[3]);
+    k = atoi(argv[4]);
   } else {
     printNNUsage();
     exit(EXIT_FAILURE);
@@ -255,7 +255,7 @@ void analogiesSent(int argc, char** argv) {
   if (argc == 4) {
     k = 10;
   } else if (argc == 5) {
-    k = atoi(argv[3]);
+    k = atoi(argv[4]);
   } else {
     printAnalogiesUsage();
     exit(EXIT_FAILURE);
