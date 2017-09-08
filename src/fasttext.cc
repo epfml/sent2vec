@@ -500,8 +500,8 @@ void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
     real dp = wordVectors.dotRow(queryVec, i);
     heap.push(std::make_pair(dp / queryNorm, word));
   }
-  int32_t i = 0;
-  while (i < k && heap.size() > 0) {
+  int32_t i = 0
+;  while (i < k && heap.size() > 0) {
     auto it = banSet.find(heap.top().second);
     if (it == banSet.end()) {
       std::cout << heap.top().second << " " << heap.top().first << std::endl;
@@ -533,10 +533,7 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   int32_t i = 0;
   while (i < k && heap.size() > 0) {
     auto it = banSet.find(heap.top().second);
-	if (
-		
-		//it == banSet.end() && 
-		!std::isnan(heap.top().first)) {
+	if (!std::isnan(heap.top().first)) {
       std::cout << heap.top().first << " " 
 				<< heap.top().second << " " 
 				<< std::endl;
@@ -607,6 +604,7 @@ void FastText::nnSent(int32_t k, std::string filename) {
         sentences.push_back(sentence);
 		n++;
   }
+  std::cout << "Number of sentences in the corpus file is " << n << "." << std::endl ;
   Matrix sentenceVectors(n+1, args_->dim);
 
   precomputeSentenceVectors(sentenceVectors, in1);
@@ -636,23 +634,24 @@ void FastText::nnSent(int32_t k, std::string filename) {
 void FastText::analogiesSent(int32_t k, std::string filename) {
   std::string sentence;
   std::ifstream in1(filename);
-  int64_t n;   
-  in1 >> n;
-
+  int64_t n = 0;   
+  
   Vector buffer(args_->dim), query(args_->dim);
-  Matrix sentenceVectors(n+1, args_->dim);
   std::vector<std::string> sentences;
   
   std::vector<int32_t> line, labels;
 
 
   std::ifstream in2(filename);
-  in2 >> n; 
   
   while (in2.peek() != EOF) {
         std::getline(in2, sentence);
-	sentences.push_back(sentence);
+		sentences.push_back(sentence);
+		n++;
   }
+  std::cout << "Number of sentences in the corpus file is " << n << "." << std::endl ;
+
+  Matrix sentenceVectors(n+1, args_->dim);
 
   precomputeSentenceVectors(sentenceVectors, in1);
   std::set<std::string> banSet;

@@ -106,9 +106,10 @@ void printNNSentUsage() {
   std::cerr
     << "usage: fasttext nnSent <model> <corpus> <k>\n\n"
     << "  <model>      model filename\n"
-    << "  <corpus>     corpus filename\n"
+    << "  <corpus>     corpus filename \n"
     << "  <k>          (optional; 10 by default) predict top k labels\n"
     << std::endl;
+    std::cout<<"NOTE : A corpus file is required to find similar sentences."<<std::endl;
 }
 
 void printAnalogiesUsage() {
@@ -117,6 +118,16 @@ void printAnalogiesUsage() {
     << "  <model>      model filename\n"
     << "  <k>          (optional; 10 by default) predict top k labels\n"
     << std::endl;
+}
+
+void printAnalogiesSentUsage() {
+  std::cout
+    << "usage: fasttext analogiesSent <model> <corpus> <k>\n\n"
+    << "  <model>      model filename\n"
+    << "  <corpus>     corpus filename \n"
+    << "  <k>          (optional; 10 by default) predict top k labels\n"
+    << std::endl;
+  std::cout<<"NOTE : A corpus file is required to find similar sentences."<<std::endl;
 }
 
 void test(int argc, char** argv) {
@@ -266,7 +277,7 @@ void analogiesSent(int argc, char** argv) {
   } else if (argc == 5) {
     k = atoi(argv[4]);
   } else {
-    printAnalogiesUsage();
+    printAnalogiesSentUsage();
     exit(EXIT_FAILURE);
   }
   FastText fasttext;
