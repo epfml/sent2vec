@@ -471,6 +471,8 @@ void FastText::precomputeSentenceVectors(Matrix& sentenceVectors,std::ifstream& 
   while (i < sentenceVectors.m_) {
   
     dict_->getLine(in, line, labels, model_->rng);
+    dict_->addNgrams(line, args_->wordNgrams, 0, model.rng);
+
     vec.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       vec.addRow(*input_, *it);
@@ -614,6 +616,7 @@ void FastText::nnSent(int32_t k, std::string filename) {
   while (std::cin.peek() != EOF) {
     query.zero();
     dict_->getLine(std::cin, line, labels, model_->rng);
+    dict_->addNgrams(line, args_->wordNgrams, 0, model.rng);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -658,6 +661,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     banSet.clear();
     query.zero();
     dict_->getLine(std::cin, line, labels, model_->rng);
+    dict_->addNgrams(line, args_->wordNgrams, 0, model.rng);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -668,6 +672,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     query.addVector(buffer, 1.0);
 
     dict_->getLine(std::cin, line, labels, model_->rng);
+    dict_->addNgrams(line, args_->wordNgrams, 0, model.rng);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -679,6 +684,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     query.addVector(buffer, -1.0);
 
     dict_->getLine(std::cin, line, labels, model_->rng);
+    dict_->addNgrams(line, args_->wordNgrams, 0, model.rng);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
