@@ -500,8 +500,8 @@ void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
     real dp = wordVectors.dotRow(queryVec, i);
     heap.push(std::make_pair(dp / queryNorm, word));
   }
-  int32_t i = 0
-;  while (i < k && heap.size() > 0) {
+  int32_t i = 0;
+  while (i < k && heap.size() > 0) {
     auto it = banSet.find(heap.top().second);
     if (it == banSet.end()) {
       std::cout << heap.top().second << " " << heap.top().first << std::endl;
@@ -533,12 +533,12 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   int32_t i = 0;
   while (i < k && heap.size() > 0) {
     auto it = banSet.find(heap.top().second);
-	if (!std::isnan(heap.top().first)) {
+    if (!std::isnan(heap.top().first)) {
       std::cout << heap.top().first << " " 
 				<< heap.top().second << " " 
 				<< std::endl;
       i++;
-	}
+    }
     heap.pop();
   }
 }
@@ -646,8 +646,8 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
   
   while (in2.peek() != EOF) {
         std::getline(in2, sentence);
-		sentences.push_back(sentence);
-		n++;
+	sentences.push_back(sentence);
+	n++;
   }
   std::cout << "Number of sentences in the corpus file is " << n << "." << std::endl ;
 
