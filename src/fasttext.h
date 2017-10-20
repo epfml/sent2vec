@@ -29,6 +29,12 @@
 #include "vector.h"
 
 namespace fasttext {
+  
+struct CompareByFirst {
+  constexpr bool operator()(std::pair<real, std::string> const & a,
+                            std::pair<real, std::string> const & b) const noexcept
+  { return a.first < b.first; }
+};
 
 class FastText {
   private:
