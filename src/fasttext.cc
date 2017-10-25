@@ -471,7 +471,7 @@ void FastText::precomputeSentenceVectors(Matrix& sentenceVectors,std::ifstream& 
   while (i < sentenceVectors.m_) {
   
     dict_->getLine(in, line, labels, model_->rng);
-	dict_->addNgrams(line, args_->wordNgrams);
+    dict_->addNgrams(line, args_->wordNgrams);
 
     vec.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
@@ -481,7 +481,8 @@ void FastText::precomputeSentenceVectors(Matrix& sentenceVectors,std::ifstream& 
       vec.mul(1.0 / line.size());
     }
     real norm = vec.norm();
-    sentenceVectors.addRow(vec, i, 1.0 / norm);
+    if(norm != 0)
+        sentenceVectors.addRow(vec, i, 1.0 / norm);
     i++;
   }
   std::cerr << " done." << std::endl;
