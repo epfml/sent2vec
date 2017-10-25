@@ -509,7 +509,8 @@ void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
 }
 
 void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
-                      int32_t k, const std::set<std::string>& banSet, int64_t numSent, const std::vector<std::string>& sentences) {
+                          int32_t k, const std::set<std::string>& banSet, int64_t numSent, 
+                          const std::vector<std::string>& sentences) {
   real queryNorm = queryVec.norm();
   if (std::abs(queryNorm) < 1e-8) {
     queryNorm = 1;
@@ -518,7 +519,7 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   Vector vec(args_->dim);
 
   for (int32_t i = 0; i < numSent; i++) {
-	std::string sentence = std::to_string(i) + " " + sentences[i];
+    std::string sentence = std::to_string(i) + " " + sentences[i];
     real dp = sentenceVectors.dotRow(queryVec, i);
     heap.push(std::make_pair(dp / queryNorm, sentence));
   }
@@ -528,8 +529,8 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
     auto it = banSet.find(heap.top().second);
     if (!std::isnan(heap.top().first)) {
       std::cout << heap.top().first << " " 
-				<< heap.top().second << " " 
-				<< std::endl;
+                                    << heap.top().second << " " 
+                                    << std::endl;
       i++;
     }
     heap.pop();
@@ -593,9 +594,9 @@ void FastText::nnSent(int32_t k, std::string filename) {
   std::ifstream in2(filename);
 
   while (in2.peek() != EOF) {
-        std::getline(in2, sentence);
-        sentences.push_back(sentence);
-		n++;
+    std::getline(in2, sentence);
+    sentences.push_back(sentence);
+    n++;
   }
   std::cout << "Number of sentences in the corpus file is " << n << "." << std::endl ;
   Matrix sentenceVectors(n+1, args_->dim);
@@ -607,7 +608,7 @@ void FastText::nnSent(int32_t k, std::string filename) {
   while (std::cin.peek() != EOF) {
     query.zero();
     dict_->getLine(std::cin, line, labels, model_->rng);
-	dict_->addNgrams(line, args_->wordNgrams);
+    dict_->addNgrams(line, args_->wordNgrams);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -618,7 +619,7 @@ void FastText::nnSent(int32_t k, std::string filename) {
     query.addVector(buffer, 1.0);
 
     findNNSent(sentenceVectors, query, k, banSet, n, sentences);
-	std::cout << std::endl;
+    std::cout << std::endl;
     std::cerr << "Query sentence? " << std::endl;
   }
 }
@@ -634,13 +635,12 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
   
   std::vector<int32_t> line, labels;
 
-
   std::ifstream in2(filename);
   
   while (in2.peek() != EOF) {
-        std::getline(in2, sentence);
-	sentences.push_back(sentence);
-	n++;
+    std::getline(in2, sentence);
+    sentences.push_back(sentence);
+    n++;
   }
   std::cout << "Number of sentences in the corpus file is " << n << "." << std::endl ;
 
@@ -653,7 +653,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     banSet.clear();
     query.zero();
     dict_->getLine(std::cin, line, labels, model_->rng);
-	dict_->addNgrams(line, args_->wordNgrams);
+    dict_->addNgrams(line, args_->wordNgrams);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -664,7 +664,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     query.addVector(buffer, 1.0);
 
     dict_->getLine(std::cin, line, labels, model_->rng);
-	dict_->addNgrams(line, args_->wordNgrams);
+    dict_->addNgrams(line, args_->wordNgrams);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
@@ -676,7 +676,7 @@ void FastText::analogiesSent(int32_t k, std::string filename) {
     query.addVector(buffer, -1.0);
 
     dict_->getLine(std::cin, line, labels, model_->rng);
-	dict_->addNgrams(line, args_->wordNgrams);
+    dict_->addNgrams(line, args_->wordNgrams);
     buffer.zero();
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       buffer.addRow(*input_, *it);
