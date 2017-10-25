@@ -515,7 +515,7 @@ void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
   if (std::abs(queryNorm) < 1e-8) {
     queryNorm = 1;
   }
-  std::priority_queue<std::pair<real, std::string>> heap;
+  std::priority_queue<std::pair<real, std::string>, std::vector<std::pair<real, std::string>>, CompareByFirst > heap;
   Vector vec(args_->dim);
 
   for (int32_t i = 0; i < numSent; i++) {
