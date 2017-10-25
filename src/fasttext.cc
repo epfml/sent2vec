@@ -299,7 +299,6 @@ void FastText::sent2vec(Model& model, real lr, const std::vector<int32_t>& line)
   std::vector<int32_t> context;
   std::uniform_real_distribution<> uniform(0, 1);
   for (int32_t i=0; i<line.size(); ++i){
-    //std::cout<<dict_->getWord(line[i])<<" ";
     if (uniform(model.rng) > dict_->getPDiscard(line[i]) || dict_->getTokenCount(line[i]) < args_->minCountLabel)
       continue;
     context = line;
@@ -307,7 +306,6 @@ void FastText::sent2vec(Model& model, real lr, const std::vector<int32_t>& line)
     dict_->addNgrams(context, args_->wordNgrams, args_->dropoutK, model.rng);
     model.update(context, line[i], lr);
   }
-  //std::cout<<std::endl;
 }
 
 void FastText::test(std::istream& in, int32_t k) {
@@ -425,13 +423,11 @@ void FastText::textVectors() {
 	dict_->addNgrams(line, args_->wordNgrams);
     }
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
-      //std::cout<<dict_->getWord(*it)<<" ";
       vec.addRow(*input_, *it);
     }
     if (!line.empty()) {
       vec.mul(1.0 / line.size());
     }
-    //std::cout<<std::endl;
     std::cout << vec << std::endl;
   }
 }
@@ -515,10 +511,6 @@ void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
 void FastText::findNNSent(const Matrix& sentenceVectors, const Vector& queryVec,
                       int32_t k, const std::set<std::string>& banSet, int64_t numSent, const std::vector<std::string>& sentences) {
   real queryNorm = queryVec.norm();
-  /*for (int i=0; i<queryVec.m_; i++){
-	std::cout<<queryVec[i]<<" ";
-  }
-  std::cout<<std::endl;*/
   if (std::abs(queryNorm) < 1e-8) {
     queryNorm = 1;
   }
