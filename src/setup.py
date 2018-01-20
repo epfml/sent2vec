@@ -23,6 +23,7 @@ ext=[Extension('*',
             include_dirs=[numpy.get_include()])]
 
 setup(
+  name='sent2vec',
   ext_modules=cythonize(ext)
 )
 

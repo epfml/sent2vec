@@ -32,11 +32,11 @@ cdef class Sent2vecModel:
         return self._thisptr.getDimension()
             
     def load_model(self, model_path):
-        cdef string cmodel_path = model_path.encode('ascii', 'ignore');
+        cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
         self._thisptr.loadModel(cmodel_path)
 
     def embed_sentence(self, sentence):
-        cdef string csentence = sentence.encode('ascii', 'ignore');
+        cdef string csentence = sentence.encode('utf-8', 'ignore');
         cdef vector[float] array;
         self._thisptr.textVector(csentence, array)
         return np.asarray(array)
