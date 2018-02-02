@@ -12,6 +12,7 @@ cdef extern from "fasttext.h" namespace "fasttext":
         FastText() except + 
         void loadModel(const string&)
         void textVector(string, vector[float]&)
+        void textVectors(vector[string]&, int, vector[float]&)
         int getDimension()
 
 
@@ -40,3 +41,15 @@ cdef class Sent2vecModel:
         cdef vector[float] array;
         self._thisptr.textVector(csentence, array)
         return np.asarray(array)
+
+    def embed_sentences(self, sentences, num_threads):
+        if num_threads <= 0:
+            num_threads = 1
+        cdef vector[string] csentences;
+        cdef int cnum_threads = num_threads;
+        for s in sentences:
+            csentences.push_back(s.encode('utf-8', 'ignore'));
+        cdef vector[float] array;
+        self._thisptr.textVectors(csentences, cnum_threads, array)
+        return np.asarray(array).reshape(len(sentences), self.get_emb_size())
+

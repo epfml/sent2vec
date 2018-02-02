@@ -420,7 +420,7 @@ void FastText::textVectors() {
     dict_->getLine(std::cin, line, labels, model_->rng);
     vec.zero();
     if (args_->model == model_name::sent2vec){
-	dict_->addNgrams(line, args_->wordNgrams);
+      dict_->addNgrams(line, args_->wordNgrams);
     }
     for (auto it = line.cbegin(); it != line.cend(); ++it) {
       vec.addRow(*input_, *it);
@@ -429,6 +429,46 @@ void FastText::textVectors() {
       vec.mul(1.0 / line.size());
     }
     std::cout << vec << std::endl;
+  }
+}
+
+void FastText::textVectorThread(int thread_id, std::shared_ptr<std::vector<std::string>> sentences, std::shared_ptr<Matrix> emb, int num_threads) {
+  std::vector<int32_t> line, labels;
+  for (int sent_idx=thread_id; sent_idx < sentences->size(); sent_idx+=num_threads) {
+    Vector vec(args_->dim);
+    textVector(sentences->operator[](sent_idx), vec, line, labels);
+    emb->addRow(vec, sent_idx, 1.);
+  }
+}
+
+void FastText::textVectors(std::vector<std::string>& sentences, int num_threads, std::vector<real>& final) {
+  std::shared_ptr<Matrix> emb;
+  std::shared_ptr<std::vector<std::string>> sents;
+  sents = std::make_shared<std::vector<std::string>>(sentences);
+  emb = std::make_shared<Matrix>(sentences.size(), args_->dim);
+  emb->zero();
+  std::vector<std::thread> threads;
+  for (int32_t i = 0; i < num_threads; i++) {
+    threads.push_back(std::thread([=]() { textVectorThread(i, sents, emb, num_threads); }));
+  }
+  for (auto it = threads.begin(); it != threads.end(); ++it) {
+    it->join();
+  }
+  final.insert(final.end(), &emb->data_[0], &emb->data_[sentences.size() * args_->dim]);
+}
+
+void FastText::textVector(std::string text, Vector& vec, std::vector<int32_t>& line, std::vector<int32_t>& labels) {
+  std::istringstream text_stream(text);
+  dict_->getLine(text_stream, line, labels, model_->rng);
+  vec.zero();
+  if (args_->model == model_name::sent2vec){
+    dict_->addNgrams(line, args_->wordNgrams);
+  }
+  for (auto it = line.cbegin(); it != line.cend(); ++it) {
+    vec.addRow(*input_, *it);
+  }
+  if (!line.empty()) {
+    vec.mul(1.0 / line.size());
   }
 }
 
