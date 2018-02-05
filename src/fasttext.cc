@@ -454,7 +454,7 @@ void FastText::textVectors(std::vector<std::string>& sentences, int num_threads,
   for (auto it = threads.begin(); it != threads.end(); ++it) {
     it->join();
   }
-  final.insert(final.end(), &emb->data_[0], &emb->data_[sentences.size() * args_->dim]);
+  memcpy(&final[0], &emb->data_[0], emb->m_*emb->n_ * sizeof(real));
 }
 
 void FastText::textVector(std::string text, Vector& vec, std::vector<int32_t>& line, std::vector<int32_t>& labels) {
