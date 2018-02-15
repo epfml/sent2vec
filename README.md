@@ -124,16 +124,13 @@ The following arguments are optional:
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:
 
-  Matteo Pagliardini, Prakhar Gupta, Martin Jaggi, [*Unsupervised Learning of Sentence Embeddings using Compositional n-Gram Features*](https://arxiv.org/abs/1703.02507) arXiv
+  Matteo Pagliardini, Prakhar Gupta, Martin Jaggi, [*Unsupervised Learning of Sentence Embeddings using Compositional n-Gram Features*](https://arxiv.org/abs/1703.02507) NAACL 2018
 
 ```
-@article{pgj2017unsup,
+@inproceedings{pgj2017unsup,
   title = {{Unsupervised Learning of Sentence Embeddings using Compositional n-Gram Features}},
   author = {Pagliardini, Matteo and Gupta, Prakhar and Jaggi, Martin},
-  journal = {arXiv},
-  eprint = {1703.02507},
-  eprinttype = {arxiv},
-  eprintclass = {cs.CL},
-  year = {2017}
+  booktitle={NAACL 2018 - Conference of the North American Chapter of the Association for Computational Linguistics},
+  year={2018}
 }
 ```
