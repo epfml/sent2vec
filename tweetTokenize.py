@@ -35,7 +35,6 @@ def tokenize_tweets(filename, dest_folder):
                 if not 6 < len(tweet) < 110:
                     continue
                 tweet = preprocess_tweet(' '.join(tweet))
-                filter(lambda word: ' ' not in word, tweet)
                 out_fs.write(id+'\t'+timestamp+'\t'+username+'\t'+tweet+'\n')
 
 def main():
