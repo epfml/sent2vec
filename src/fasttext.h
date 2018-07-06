@@ -75,7 +75,6 @@ class FastText {
     void sentenceVectors();
     void ngramVectors(std::string);
     void textVectors();
-    void textVector(std::string, std::vector<real>&);
     void textVectorThread(int, std::shared_ptr<std::vector<std::string>>, std::shared_ptr<Matrix>, int);
     void textVectors(std::vector<std::string>&, int, std::vector<real>&);
     void textVector(std::string, Vector&, std::vector<int32_t>&, std::vector<int32_t>&);
