@@ -81,12 +81,6 @@ cdef class Sent2vecModel:
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
         self._thisptr.loadModel(cmodel_path)
 
-    def embed_sentence(self, sentence):
-        cdef string csentence = sentence.encode('utf-8', 'ignore');
-        cdef vector[float] array;
-        self._thisptr.textVector(csentence, array)
-        return np.asarray(array)
-
     def embed_sentences(self, sentences, num_threads=1):
         if num_threads <= 0:
             num_threads = 1
@@ -99,3 +93,6 @@ cdef class Sent2vecModel:
         self._thisptr.textVectors(csentences, cnum_threads, w.buf[0])
         final = w.asarray(len(sentences) * self.get_emb_size()) 
         return final.reshape(len(sentences), self.get_emb_size())
+
+    def embed_sentence(self, sentence, num_threads=1):
+        return self.embed_sentences([sentence], num_threads)

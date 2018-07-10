@@ -472,24 +472,6 @@ void FastText::textVector(std::string text, Vector& vec, std::vector<int32_t>& l
   }
 }
 
-void FastText::textVector(std::string text, std::vector<real>& emb) {
-  std::vector<int32_t> line, labels;
-  Vector vec(args_->dim);
-  std::istringstream text_stream(text);
-  dict_->getLine(text_stream, line, labels, model_->rng);
-  vec.zero();
-  if (args_->model == model_name::sent2vec){
-    dict_->addNgrams(line, args_->wordNgrams);
-  }
-  for (auto it = line.cbegin(); it != line.cend(); ++it) {
-    vec.addRow(*input_, *it);
-  }
-  if (!line.empty()) {
-    vec.mul(1.0 / line.size());
-  }
-  emb.insert(emb.end(), &vec.data_[0], &vec.data_[args_->dim]);
-}
-
 void FastText::printWordVectors() {
   wordVectors();
 }
