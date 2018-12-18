@@ -1,6 +1,7 @@
 import numpy as np
 cimport numpy as cnp 
 
+from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
@@ -13,7 +14,7 @@ cdef extern from "fasttext.h" namespace "fasttext":
 
     cdef cppclass FastText:
         FastText() except + 
-        void loadModel(const string&)
+        void loadModel(const string&, bool)
         void textVector(string, vector[float]&)
         void textVectors(vector[string]&, int, vector[float])#&)
         int getDimension()
@@ -31,7 +32,7 @@ cdef class vector_wrapper:
     cdef: 
         vector[float] *buf 
 
-    def __cinit__(vector_wrapper self, n): 
+    def __cinit__(vector_wrapper self, n):
         self.buf = NULL 
 
     def __init__(vector_wrapper self, cnp.intp_t n): 
@@ -77,9 +78,10 @@ cdef class Sent2vecModel:
     def get_emb_size(self):
         return self._thisptr.getDimension()
             
-    def load_model(self, model_path):
+    def load_model(self, model_path, predict_mode=False):
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
-        self._thisptr.loadModel(cmodel_path)
+        cdef bool cpredict_mode = predict_mode
+        self._thisptr.loadModel(cmodel_path, cpredict_mode)
 
     def embed_sentences(self, sentences, num_threads=1):
         if num_threads <= 0:

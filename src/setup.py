@@ -8,6 +8,7 @@ sourcefiles  = ['sent2vec.pyx',
                 "args.cc", 
                 "dictionary.cc", 
                 "matrix.cc", 
+                "shmem_matrix.cc",
                 "qmatrix.cc", 
                 "model.cc", 
                 'real.cc', 
@@ -20,7 +21,8 @@ ext=[Extension('*',
             sourcefiles,
             extra_compile_args=compile_opts,
             language='c++',
-            include_dirs=[numpy.get_include()])]
+            include_dirs=[numpy.get_include()],
+            libraries=['rt'])]
 
 setup(
   name='sent2vec',
