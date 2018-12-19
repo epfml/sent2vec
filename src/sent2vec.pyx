@@ -1,3 +1,4 @@
+import subprocess
 import numpy as np
 cimport numpy as cnp 
 
@@ -98,3 +99,7 @@ cdef class Sent2vecModel:
 
     def embed_sentence(self, sentence, num_threads=1):
         return self.embed_sentences([sentence], num_threads)
+
+    @staticmethod
+    def release_shared_mem():
+        subprocess.run('unlink /dev/shm/s2v_input_matrix', shell=True)
