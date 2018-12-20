@@ -1,4 +1,5 @@
 import subprocess
+
 import numpy as np
 cimport numpy as cnp 
 
@@ -79,10 +80,10 @@ cdef class Sent2vecModel:
     def get_emb_size(self):
         return self._thisptr.getDimension()
             
-    def load_model(self, model_path, predict_mode=False):
+    def load_model(self, model_path, inference_mode=False):
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
-        cdef bool cpredict_mode = predict_mode
-        self._thisptr.loadModel(cmodel_path, cpredict_mode)
+        cdef bool cinference_mode = inference_mode
+        self._thisptr.loadModel(cmodel_path, cinference_mode)
 
     def embed_sentences(self, sentences, num_threads=1):
         if num_threads <= 0:

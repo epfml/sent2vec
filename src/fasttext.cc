@@ -126,7 +126,7 @@ void FastText::saveModel() {
 }
 
 void FastText::loadModel(const std::string& filename,
-                         const bool predict_mode /* = false */) {
+                         const bool inference_mode /* = false */) {
   std::ifstream ifs(filename, std::ifstream::binary);
   if (!ifs.is_open()) {
     std::cerr << "Model file cannot be opened for loading!" << std::endl;
@@ -136,8 +136,8 @@ void FastText::loadModel(const std::string& filename,
     std::cerr << "Model file has wrong file format!" << std::endl;
     exit(EXIT_FAILURE);
   }
-  if (predict_mode) {
-    loadModelForPredict(ifs);
+  if (inference_mode) {
+    loadModelForInference(ifs);
   } else {
     loadModel(ifs);
   }
@@ -182,7 +182,7 @@ void FastText::loadModel(std::istream& in) {
   }
 }
 
-void FastText::loadModelForPredict(std::istream& in) {
+void FastText::loadModelForInference(std::istream& in) {
   args_ = std::make_shared<Args>();
   args_->load(in);
 
