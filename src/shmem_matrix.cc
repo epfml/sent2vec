@@ -19,6 +19,14 @@
 
 namespace fasttext {
 
+/* Note: The shared memory segment is created when loading the input matrix for
+ * the first time. It is not unlinked by the code, because it is hard to do
+ * this from the code. It is safe to unlink the segment once every interested
+ * process has opened it, but it is impossible to know this without some kind
+ * of interprocess synchronization. Therefore, it is left to the user to unlink
+ * it at some point when it is no longer needed.
+**/
+
 ShmemMatrix::ShmemMatrix(const char* name, const int64_t m, const int64_t n) {
   m_ = m;
   n_ = n;
@@ -106,21 +114,7 @@ std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* nam
     in.seekg(size, in.cur);
   }
 
-  auto matrix = std::make_shared<ShmemMatrix>(name, m, n);
-
-  //TODO: Unlink is only safe to do once every process has opened the shared
-  //      memory segment. This is hard to do from the code. One way would be
-  //      to put a refcount in the segment itself, which would also require
-  //      the segment to be opened as O_RDWR, and the refcount should be
-  //      protected by an IPC semaphore.
-  //// Unlink the shared memory segment
-  //int ret = shm_unlink(name);
-  //if (ret == -1) {
-  //  perror("shm_unlink failed");
-  //  exit(-1);
-  //}
-
-  return matrix;
+  return std::make_shared<ShmemMatrix>(name, m, n);
 }
 
 }

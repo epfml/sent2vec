@@ -46,6 +46,13 @@ Text preprocessing (tokenization and lowercasing) is not handled by the module, 
 
 An alternative to the Cython module is using the python code provided in the `get_sentence_embeddings_from_pre-trained_models` notebook. It handles tokenization and can be given raw sentences, but does not keep the model in memory. 
 
+#### Running inference with multiple processes
+
+There is an 'inference' mode for loading the model in the Cython module, which loads the model's input matrix into a shared memory segment and doesn't load the output matrix, which is not needed for inference. This is an optimization for the usecase of running inference with multiple independent processes, which would otherwise each need to load a copy of the model into their address space. To use it:
+```python
+model.load_model('model.bin', inference_mode=True)
+```
+
 # Using Sentence level nearest neighbour search and analogies
 Given a pre-trained model `model.bin` , here is how to use these features. For the nearest neighbouring sentence feature, you need the model as well as a corpora in which you can search for the nearest neighbouring sentence to your input sentence. We use cosine distance as our distance metric. To do so, we use the command `nnSent` and the input should be 1 sentence per line:
 
