@@ -24,7 +24,7 @@ ShmemMatrix::ShmemMatrix(const char* name, const int64_t m, const int64_t n) {
   n_ = n;
 
   // Open an existing shared memory segment
-  int fd = shm_open(name, O_RDONLY, 0644);
+  int fd = shm_open(name, O_RDONLY, 0444);
   if (fd == -1) {
     perror("ShmemMatrix::ShmemMatrix: shm_open failed");
     exit(-1);
@@ -67,7 +67,7 @@ std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* nam
 
   // Create a shared memory segment
   bool new_segment = true;
-  int fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, 0644);
+  int fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, 0444);
   if (fd == -1) {
     if (errno == EEXIST) {
       new_segment = false;
