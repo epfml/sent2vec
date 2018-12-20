@@ -36,11 +36,10 @@ model.load_model('model.bin')
 emb = model.embed_sentence("once upon a time .") 
 embs = model.embed_sentences(["first sentence .", "another sentence"])  
 ```
-In order to compile and install the module globally, run the following from the `src` folder:
+In order to compile and install the module, run the following from the project root folder:
 
 ```
-python setup.py build_ext
-sudo pip install .
+pip install .
 ```
 Text preprocessing (tokenization and lowercasing) is not handled by the module, check `wikiTokenize.py` for tokenization using NLTK and Stanford NLP. 
 
