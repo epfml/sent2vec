@@ -137,7 +137,7 @@ void FastText::loadModel(const std::string& filename,
     exit(EXIT_FAILURE);
   }
   if (inference_mode) {
-    loadModelForInference(ifs);
+    loadModelForInference(ifs, filename);
   } else {
     loadModel(ifs);
   }
@@ -182,7 +182,22 @@ void FastText::loadModel(std::istream& in) {
   }
 }
 
-void FastText::loadModelForInference(std::istream& in) {
+static std::string basename(const std::string& filename) {
+  std::string s = filename;
+  size_t separator_idx = s.find_last_of("\\/");
+  if (separator_idx != std::string::npos) {
+    s.erase(0, separator_idx + 1);
+  }
+  size_t extension_idx = s.rfind('.');
+  if (extension_idx != std::string::npos) {
+    s.erase(extension_idx);
+  }
+  return s;
+}
+
+void FastText::loadModelForInference(std::istream& in, const std::string& filename) {
+  std::string shmem_name = "s2v_" + basename(filename) + "_input_matrix";
+
   args_ = std::make_shared<Args>();
   args_->load(in);
 
@@ -191,7 +206,7 @@ void FastText::loadModelForInference(std::istream& in) {
 
   in.read((char*) &quant_, sizeof(bool));
 
-  input_ = ShmemMatrix::load(in, "s2v_input_matrix");
+  input_ = ShmemMatrix::load(in, shmem_name.c_str());
 
   in.read((char*) &args_->qout, sizeof(bool));
 
