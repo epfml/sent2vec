@@ -1,3 +1,4 @@
+import os.path
 import subprocess
 
 import numpy as np
@@ -75,7 +76,7 @@ cdef class Sent2vecModel:
         del self._thisptr
 
     def __init__(self):
-        pass  
+        pass
 
     def get_emb_size(self):
         return self._thisptr.getDimension()
@@ -102,5 +103,7 @@ cdef class Sent2vecModel:
         return self.embed_sentences([sentence], num_threads)
 
     @staticmethod
-    def release_shared_mem():
-        subprocess.run('unlink /dev/shm/s2v_input_matrix', shell=True)
+    def release_shared_mem(model_path):
+        model_basename = os.path.splitext(os.path.basename(model_path))[0]
+        shm_path = ''.join(['/dev/shm/', 's2v_', model_basename, '_input_matrix'])
+        subprocess.run(f'unlink {shm_path}', shell=True)
