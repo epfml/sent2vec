@@ -8,6 +8,7 @@
  */
 
 #include "fasttext.h"
+#include "shmem_matrix.h"
 
 #include <math.h>
 
@@ -124,7 +125,8 @@ void FastText::saveModel() {
   ofs.close();
 }
 
-void FastText::loadModel(const std::string& filename) {
+void FastText::loadModel(const std::string& filename,
+                         const bool inference_mode /* = false */) {
   std::ifstream ifs(filename, std::ifstream::binary);
   if (!ifs.is_open()) {
     std::cerr << "Model file cannot be opened for loading!" << std::endl;
@@ -134,7 +136,11 @@ void FastText::loadModel(const std::string& filename) {
     std::cerr << "Model file has wrong file format!" << std::endl;
     exit(EXIT_FAILURE);
   }
-  loadModel(ifs);
+  if (inference_mode) {
+    loadModelForInference(ifs, filename);
+  } else {
+    loadModel(ifs);
+  }
   ifs.close();
 }
 
@@ -168,6 +174,47 @@ void FastText::loadModel(std::istream& in) {
   model_ = std::make_shared<Model>(input_, output_, args_, 0);
   model_->quant_ = quant_;
   model_->setQuantizePointer(qinput_, qoutput_, args_->qout);
+
+  if (args_->model == model_name::sup) {
+    model_->setTargetCounts(dict_->getCounts(entry_type::label));
+  } else {
+    model_->setTargetCounts(dict_->getCounts(entry_type::word));
+  }
+}
+
+static std::string basename(const std::string& filename) {
+  std::string s = filename;
+  size_t separator_idx = s.find_last_of("\\/");
+  if (separator_idx != std::string::npos) {
+    s.erase(0, separator_idx + 1);
+  }
+  size_t extension_idx = s.rfind('.');
+  if (extension_idx != std::string::npos) {
+    s.erase(extension_idx);
+  }
+  return s;
+}
+
+void FastText::loadModelForInference(std::istream& in, const std::string& filename) {
+  std::string shmem_name = "s2v_" + basename(filename) + "_input_matrix";
+
+  args_ = std::make_shared<Args>();
+  args_->load(in);
+
+  dict_ = std::make_shared<Dictionary>(args_);
+  dict_->load(in);
+
+  in.read((char*) &quant_, sizeof(bool));
+
+  input_ = ShmemMatrix::load(in, shmem_name.c_str());
+
+  in.read((char*) &args_->qout, sizeof(bool));
+
+  output_ = std::make_shared<Matrix>();
+  in.read((char*) &(output_->m_), sizeof(int64_t));
+  in.read((char*) &(output_->n_), sizeof(int64_t));
+
+  model_ = std::make_shared<Model>(input_, output_, args_, 0);
 
   if (args_->model == model_name::sup) {
     model_->setTargetCounts(dict_->getCounts(entry_type::label));

@@ -1,6 +1,10 @@
+import os.path
+import subprocess
+
 import numpy as np
 cimport numpy as cnp 
 
+from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
@@ -13,7 +17,7 @@ cdef extern from "fasttext.h" namespace "fasttext":
 
     cdef cppclass FastText:
         FastText() except + 
-        void loadModel(const string&)
+        void loadModel(const string&, bool)
         void textVector(string, vector[float]&)
         void textVectors(vector[string]&, int, vector[float])#&)
         int getDimension()
@@ -31,7 +35,7 @@ cdef class vector_wrapper:
     cdef: 
         vector[float] *buf 
 
-    def __cinit__(vector_wrapper self, n): 
+    def __cinit__(vector_wrapper self, n):
         self.buf = NULL 
 
     def __init__(vector_wrapper self, cnp.intp_t n): 
@@ -72,14 +76,15 @@ cdef class Sent2vecModel:
         del self._thisptr
 
     def __init__(self):
-        pass  
+        pass
 
     def get_emb_size(self):
         return self._thisptr.getDimension()
             
-    def load_model(self, model_path):
+    def load_model(self, model_path, inference_mode=False):
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
-        self._thisptr.loadModel(cmodel_path)
+        cdef bool cinference_mode = inference_mode
+        self._thisptr.loadModel(cmodel_path, cinference_mode)
 
     def embed_sentences(self, sentences, num_threads=1):
         if num_threads <= 0:
@@ -96,3 +101,9 @@ cdef class Sent2vecModel:
 
     def embed_sentence(self, sentence, num_threads=1):
         return self.embed_sentences([sentence], num_threads)
+
+    @staticmethod
+    def release_shared_mem(model_path):
+        model_basename = os.path.splitext(os.path.basename(model_path))[0]
+        shm_path = ''.join(['/dev/shm/', 's2v_', model_basename, '_input_matrix'])
+        subprocess.run(f'unlink {shm_path}', shell=True)
