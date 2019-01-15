@@ -52,6 +52,11 @@ There is an 'inference' mode for loading the model in the Cython module, which l
 model.load_model('model.bin', inference_mode=True)
 ```
 
+The model is loaded into a shared memory segment named after the model name. The model will stay in memory until you explicitely remove the shared memory segment. To do it from Python:
+```python
+model.release_shared_mem('model.bin')
+```
+
 # Using Sentence level nearest neighbour search and analogies
 Given a pre-trained model `model.bin` , here is how to use these features. For the nearest neighbouring sentence feature, you need the model as well as a corpora in which you can search for the nearest neighbouring sentence to your input sentence. We use cosine distance as our distance metric. To do so, we use the command `nnSent` and the input should be 1 sentence per line:
 
