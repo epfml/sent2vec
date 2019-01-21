@@ -57,9 +57,9 @@ class FastText {
     void saveVectors();
     void saveOutput();
     void saveModel();
-    void loadModel(const std::string&, const bool inference_mode = false);
+    void loadModel(const std::string&, const bool inference_mode = false, const int timeout_sec = -1);
     void loadModel(std::istream&);
-    void loadModelForInference(std::istream&, const std::string&);
+    void loadModelForInference(std::istream&, const std::string&, const int);
     void printInfo(real, real);
 
     void supervised(Model&, real, const std::vector<int32_t>&,

@@ -17,7 +17,7 @@ cdef extern from "fasttext.h" namespace "fasttext":
 
     cdef cppclass FastText:
         FastText() except + 
-        void loadModel(const string&, bool)
+        void loadModel(const string&, bool, int)
         void textVector(string, vector[float]&)
         void textVectors(vector[string]&, int, vector[float])#&)
         int getDimension()
@@ -81,10 +81,11 @@ cdef class Sent2vecModel:
     def get_emb_size(self):
         return self._thisptr.getDimension()
             
-    def load_model(self, model_path, inference_mode=False):
+    def load_model(self, model_path, inference_mode=False, timeout_sec=-1):
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
         cdef bool cinference_mode = inference_mode
-        self._thisptr.loadModel(cmodel_path, cinference_mode)
+        cdef int ctimeout_sec = timeout_sec
+        self._thisptr.loadModel(cmodel_path, cinference_mode, ctimeout_sec)
 
     def embed_sentences(self, sentences, num_threads=1):
         if num_threads <= 0:
@@ -106,4 +107,5 @@ cdef class Sent2vecModel:
     def release_shared_mem(model_path):
         model_basename = os.path.splitext(os.path.basename(model_path))[0]
         shm_path = ''.join(['/dev/shm/', 's2v_', model_basename, '_input_matrix'])
+        subprocess.run(f'unlink {shm_path}.init', shell=True)
         subprocess.run(f'unlink {shm_path}', shell=True)

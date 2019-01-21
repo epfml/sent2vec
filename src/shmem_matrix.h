@@ -14,6 +14,7 @@
 #include <istream>
 #include <memory>
 #include <ostream>
+#include <string>
 
 #include "matrix.h"
 #include "real.h"
@@ -22,14 +23,14 @@ namespace fasttext {
 
 class ShmemMatrix : public Matrix {
   public:
-    ShmemMatrix(const char*, const int64_t, const int64_t);
+    ShmemMatrix(const char*, const int64_t, const int64_t, const int);
     ~ShmemMatrix();
 
     Matrix& operator=(const Matrix&) = delete;
     void save(std::ostream&) = delete;
     void load(std::istream&) = delete;
 
-    static std::shared_ptr<ShmemMatrix> load(std::istream&, const char*);
+    static std::shared_ptr<ShmemMatrix> load(std::istream&, const std::string&, const int);
 };
 
 }

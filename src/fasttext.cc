@@ -126,7 +126,8 @@ void FastText::saveModel() {
 }
 
 void FastText::loadModel(const std::string& filename,
-                         const bool inference_mode /* = false */) {
+                         const bool inference_mode /* = false */,
+                         const int timeout_sec /* = -1 */) {
   std::ifstream ifs(filename, std::ifstream::binary);
   if (!ifs.is_open()) {
     std::cerr << "Model file cannot be opened for loading!" << std::endl;
@@ -137,7 +138,7 @@ void FastText::loadModel(const std::string& filename,
     exit(EXIT_FAILURE);
   }
   if (inference_mode) {
-    loadModelForInference(ifs, filename);
+    loadModelForInference(ifs, filename, timeout_sec);
   } else {
     loadModel(ifs);
   }
@@ -195,7 +196,9 @@ static std::string basename(const std::string& filename) {
   return s;
 }
 
-void FastText::loadModelForInference(std::istream& in, const std::string& filename) {
+void FastText::loadModelForInference(std::istream& in,
+                                     const std::string& filename,
+                                     const int timeout_sec) {
   std::string shmem_name = "s2v_" + basename(filename) + "_input_matrix";
 
   args_ = std::make_shared<Args>();
@@ -206,7 +209,7 @@ void FastText::loadModelForInference(std::istream& in, const std::string& filena
 
   in.read((char*) &quant_, sizeof(bool));
 
-  input_ = ShmemMatrix::load(in, shmem_name.c_str());
+  input_ = ShmemMatrix::load(in, shmem_name, timeout_sec);
 
   in.read((char*) &args_->qout, sizeof(bool));
 
