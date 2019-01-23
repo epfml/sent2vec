@@ -27,22 +27,35 @@ namespace fasttext {
  * it at some point when it is no longer needed.
 **/
 
-ShmemMatrix::ShmemMatrix(const char* name, const int64_t m, const int64_t n) {
+ShmemMatrix::ShmemMatrix(const char* name, const int64_t m, const int64_t n, const int timeout_sec) {
   m_ = m;
   n_ = n;
 
-  // Open an existing shared memory segment
-  int fd = shm_open(name, O_RDONLY, 0444);
-  if (fd == -1) {
-    perror("ShmemMatrix::ShmemMatrix: shm_open failed");
-    exit(-1);
+  // Open an existing shared memory segment (keep retrying until timeout expires)
+  int fd = -1;
+  int waited_sec = 0;
+  while (true) {
+    fd = shm_open(name, O_RDONLY, 0444);
+    if (fd != -1) break;
+    if (errno == ENOENT) {
+      if (timeout_sec != -1 && waited_sec >= timeout_sec) {
+        fprintf(stderr, "ERROR ShmemMatrix::ShmemMatrix: timeout expired\n");
+        exit(-1);
+      } else {
+        sleep(1);
+        waited_sec += 1;
+      }
+    } else {
+      perror("ERROR ShmemMatrix::ShmemMatrix: shm_open failed");
+      exit(-1);
+    }
   }
 
   // Map the shared memory segment
   size_t size = m_ * n_ * sizeof(real);
   void* ptr = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
   if (ptr == (void*)-1) {
-    perror("ShmemMatrix::ShmemMatrix: mmap failed");
+    perror("ERROR ShmemMatrix::ShmemMatrix: mmap failed");
     exit(-1);
   } else {
     data_ = (real*)ptr;
@@ -51,7 +64,7 @@ ShmemMatrix::ShmemMatrix(const char* name, const int64_t m, const int64_t n) {
   // Close the file descriptor
   int ret = close(fd);
   if (ret == -1) {
-    perror("ShmemMatrix::ShmemMatrix: close failed");
+    perror("ERROR ShmemMatrix::ShmemMatrix: close failed");
     exit(-1);
   }
 }
@@ -61,26 +74,30 @@ ShmemMatrix::~ShmemMatrix() {
   size_t size = m_ * n_ * sizeof(real);
   int ret = munmap((void*)data_, size);
   if (ret == -1) {
-    perror("ShmemMatrix::~ShmemMatrix: munmap failed");
+    perror("ERROR ShmemMatrix::~ShmemMatrix: munmap failed");
     exit(-1);
   }
   data_ = nullptr;
 }
 
-std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* name) {
+std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in,
+                                               const std::string& name,
+                                               const int timeout_sec) {
+  std::string init_name = name + ".init";
+
   int64_t m, n;
   in.read((char*)&m, sizeof(int64_t));
   in.read((char*)&n, sizeof(int64_t));
   size_t size = m * n * sizeof(real);
 
-  // Create a shared memory segment
+  // Create a shared memory segment to be initialized with the input matrix
   bool new_segment = true;
-  int fd = shm_open(name, O_RDWR | O_CREAT | O_EXCL, 0444);
+  int fd = shm_open(init_name.c_str(), O_RDWR | O_CREAT | O_EXCL, 0444);
   if (fd == -1) {
     if (errno == EEXIST) {
       new_segment = false;
     } else {
-      perror("ShmemMatrix::load: shm_open failed");
+      perror("ERROR ShmemMatrix::load: shm_open failed");
       exit(-1);
     }
   }
@@ -89,14 +106,21 @@ std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* nam
     // Set the size for shared memory segment
     int ret = ftruncate(fd, size);
     if (ret == -1) {
-      perror("ShmemMatrix::load: ftruncate failed");
+      perror("ERROR ShmemMatrix::load: ftruncate failed");
       exit(-1);
     }
 
     // Map the shared memory segment
     void* ptr = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, 0);
     if (ptr == (void*)-1) {
-      perror("ShmemMatrix::load: mmap failed");
+      perror("ERROR ShmemMatrix::load: mmap failed");
+      exit(-1);
+    }
+
+    // Close the file descriptor
+    ret = close(fd);
+    if (ret == -1) {
+      perror("ERROR ShmemMatrix::load: close failed");
       exit(-1);
     }
 
@@ -106,7 +130,16 @@ std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* nam
     // Unmap the shared memory segment
     ret = munmap(ptr, size);
     if (ret == -1) {
-      perror("ShmemMatrix::load: munmap failed");
+      perror("ERROR ShmemMatrix::load: munmap failed");
+      exit(-1);
+    }
+
+    // Atomically link to the expected name
+    std::string init_name_path = "/dev/shm/" + init_name;
+    std::string name_path = "/dev/shm/" + name;
+    ret = link(init_name_path.c_str(), name_path.c_str());
+    if (ret == -1) {
+      perror("ERROR ShmemMatrix::load: link failed");
       exit(-1);
     }
   } else {
@@ -114,7 +147,7 @@ std::shared_ptr<ShmemMatrix> ShmemMatrix::load(std::istream& in, const char* nam
     in.seekg(size, in.cur);
   }
 
-  return std::make_shared<ShmemMatrix>(name, m, n);
+  return std::make_shared<ShmemMatrix>(name.c_str(), m, n, timeout_sec);
 }
 
 }
