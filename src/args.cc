@@ -18,6 +18,7 @@ namespace fasttext {
 
 Args::Args() {
   lr = 0.05;
+  boostNgrams = 1.0;
   dim = 100;
   ws = 5;
   dropoutK = 0;
@@ -29,6 +30,7 @@ Args::Args() {
   loss = loss_name::ns;
   model = model_name::sg;
   bucket = 2000000;
+  bucketChar = 1;
   minn = 3;
   maxn = 6;
   thread = 12;
@@ -38,7 +40,8 @@ Args::Args() {
   verbose = 2;
   pretrainedVectors = "";
   saveOutput = 0;
-
+  maxVocabSize = -1;
+  numCheckPoints = 1;
   qout = false;
   retrain = false;
   qnorm = false;
@@ -62,9 +65,19 @@ void Args::parseArgs(int argc, char** argv) {
     loss = loss_name::ns;
     neg = 10;
     minCount = 5;
-    minn = 0;
-    maxn = 0;
-    lr = 0.2;
+    minn = 3;
+    maxn = 6;
+    lr = 0.05;
+    dropoutK = 2;
+  } else if (command == "cbow-c+w-ngrams") {
+    model = model_name::cbowCWNgrams;
+    loss = loss_name::ns;
+    neg = 10;
+    minCount = 5;
+    bucketChar = 1;
+    minn = 3;
+    maxn = 6;
+    lr = 0.05;
     dropoutK = 2;
   }
   int ai = 2;
@@ -84,8 +97,12 @@ void Args::parseArgs(int argc, char** argv) {
       test = std::string(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-output") == 0) {
       output = std::string(argv[ai + 1]);
+    } else if (strcmp(argv[ai], "-dict") == 0) {
+      dict = std::string(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-lr") == 0) {
       lr = atof(argv[ai + 1]);
+    } else if (strcmp(argv[ai], "-boostNgrams") == 0) {
+      boostNgrams = atof(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-lrUpdateRate") == 0) {
       lrUpdateRate = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-dim") == 0) {
@@ -100,6 +117,8 @@ void Args::parseArgs(int argc, char** argv) {
       minCountLabel = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-neg") == 0) {
       neg = atoi(argv[ai + 1]);
+    } else if (strcmp(argv[ai], "-numCheckPoints") == 0) {
+      numCheckPoints = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-dropoutK") == 0) {
       dropoutK = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-wordNgrams") == 0) {
@@ -119,6 +138,8 @@ void Args::parseArgs(int argc, char** argv) {
       }
     } else if (strcmp(argv[ai], "-bucket") == 0) {
       bucket = atoi(argv[ai + 1]);
+    } else if (strcmp(argv[ai], "-bucketChar") == 0) {
+      bucketChar = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-minn") == 0) {
       minn = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-maxn") == 0) {
@@ -131,6 +152,8 @@ void Args::parseArgs(int argc, char** argv) {
       label = std::string(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-verbose") == 0) {
       verbose = atoi(argv[ai + 1]);
+    } else if (strcmp(argv[ai], "-maxVocabSize") == 0) {
+      maxVocabSize = atoi(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-pretrainedVectors") == 0) {
       pretrainedVectors = std::string(argv[ai + 1]);
     } else if (strcmp(argv[ai], "-saveOutput") == 0) {
@@ -183,6 +206,9 @@ void Args::printHelp() {
     << "  -wordNgrams         max length of word ngram [" << wordNgrams << "]\n"
     << "  -loss               loss function {ns, hs, softmax} [ns]\n"
     << "  -bucket             number of buckets [" << bucket << "]\n"
+    << "  -bucketChar         number of buckets for char-ngrams used by cbow-c+w-ngrams [" << bucketChar << "]\n"
+    << "  -maxVocabSize       vocabulary exceeding this size will be truncated [None]\n"
+    << "  -numCheckPoints     number of intermediary checkpoints to save when training [" << numCheckPoints << "]\n"
     << "  -minn               min length of char ngram [" << minn << "]\n"
     << "  -maxn               max length of char ngram [" << maxn << "]\n"
     << "  -thread             number of threads [" << thread << "]\n"
@@ -211,6 +237,7 @@ void Args::save(std::ostream& out) {
   out.write((char*) &(loss), sizeof(loss_name));
   out.write((char*) &(model), sizeof(model_name));
   out.write((char*) &(bucket), sizeof(int));
+  out.write((char*) &(bucketChar), sizeof(int));
   out.write((char*) &(minn), sizeof(int));
   out.write((char*) &(maxn), sizeof(int));
   out.write((char*) &(lrUpdateRate), sizeof(int));
@@ -227,6 +254,7 @@ void Args::load(std::istream& in) {
   in.read((char*) &(loss), sizeof(loss_name));
   in.read((char*) &(model), sizeof(model_name));
   in.read((char*) &(bucket), sizeof(int));
+  in.read((char*) &(bucketChar), sizeof(int));
   in.read((char*) &(minn), sizeof(int));
   in.read((char*) &(maxn), sizeof(int));
   in.read((char*) &(lrUpdateRate), sizeof(int));

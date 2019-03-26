@@ -90,13 +90,16 @@ class Dictionary {
     void save(std::ostream&) const;
     void load(std::istream&);
     std::vector<int64_t> getCounts(entry_type) const;
+    std::vector<std::string> getVocab() const;
     void addNgrams(std::vector<int32_t>&, int32_t, int32_t, std::minstd_rand&) const;
+    void addNgrams(std::vector<int32_t>&, std::vector<int32_t>&e, int32_t, int32_t, int32_t, int32_t, std::minstd_rand&);
     void addNgrams(std::vector<int32_t>&, int32_t) const;
     int32_t getLine(std::istream&, std::vector<int32_t>&, std::vector<int32_t>&,
                     std::vector<int32_t>&, std::minstd_rand&) const;
     int32_t getLine(std::istream&, std::vector<int32_t>&,
                     std::vector<int32_t>&, std::minstd_rand&) const;
     void threshold(int64_t, int64_t);
+    void truncate(int64_t);
     void prune(std::vector<int32_t>&);
     void convertNgrams(std::vector<int32_t>&);
 };

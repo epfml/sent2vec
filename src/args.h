@@ -16,7 +16,7 @@
 
 namespace fasttext {
 
-enum class model_name : int {cbow=1, sg, sup, sent2vec};
+enum class model_name : int {cbow=1, sg, sup, sent2vec, cbowCWNgrams};
 enum class loss_name : int {hs=1, ns, softmax};
 
 class Args {
@@ -25,19 +25,24 @@ class Args {
     std::string input;
     std::string test;
     std::string output;
+    std::string dict;
     double lr;
+    double boostNgrams;
     int lrUpdateRate;
     int dim;
     int ws;
     int dropoutK;
     int epoch;
+    int maxVocabSize;
     int minCount;
     int minCountLabel;
     int neg;
     int wordNgrams;
+    int numCheckPoints;
     loss_name loss;
     model_name model;
     int bucket;
+    int bucketChar;
     int minn;
     int maxn;
     int thread;

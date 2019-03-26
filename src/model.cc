@@ -222,6 +222,33 @@ void Model::update(const std::vector<int32_t>& input, int32_t target, real lr) {
   }
 }
 
+void Model::update(const std::vector<int32_t>& input, int32_t target, real lr, real boostNgrams, int32_t lowIdx, int32_t hiIdx) {
+  assert(target >= 0);
+  assert(target < osz_);
+  if (input.size() == 0) return;
+  computeHidden(input, hidden_);
+  if (args_->loss == loss_name::ns) {
+    loss_ += negativeSampling(target, lr);
+  } else if (args_->loss == loss_name::hs) {
+    loss_ += hierarchicalSoftmax(target, lr);
+  } else {
+    loss_ += softmax(target, lr);
+  }
+  nexamples_ += 1;
+
+  //if (args_->model == model_name::sup || args_->model == model_name::sent2vec) {
+  //  grad_.mul(1.0 / input.size());
+  //}
+  for (auto it = input.cbegin(); it != input.cend(); ++it) {
+    if (*it > lowIdx && *it < hiIdx) {
+      wi_->addRow(grad_, *it, boostNgrams);
+    } else {
+      wi_->addRow(grad_, *it, 1.0);
+    }
+  }
+}
+
+
 void Model::setTargetCounts(const std::vector<int64_t>& counts) {
   assert(counts.size() == osz_);
   if (args_->loss == loss_name::ns) {
