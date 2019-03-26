@@ -114,6 +114,16 @@ cdef class Sent2vecModel:
         assert len(vocab) == len(freqs)
         return {w:c for w, c in zip(vocab, freqs)}
 
+    def get_unigram_embeddings(self):
+        vocab = list(self.get_vocabulary().items())
+        vocab.sort(key=lambda x: x[1], reverse=True)
+        vocab = [w for w, c in vocab]
+        return self.embed_sentences(vocab), vocab
+
+    def embed_unigrams(self, unigrams):
+        assert all(len(w.split(' ')) == 1 for w in unigrams)
+        return self.embed_sentences(unigrams)
+
     @staticmethod
     def release_shared_mem(model_path):
         model_basename = os.path.splitext(os.path.basename(model_path))[0]
