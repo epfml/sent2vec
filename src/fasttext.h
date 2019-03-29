@@ -34,15 +34,15 @@ class FastText {
   private:
     std::shared_ptr<Args> args_;
     std::shared_ptr<Dictionary> dict_;
-    
+
     std::shared_ptr<Matrix> input_;
     std::shared_ptr<Matrix> output_;
 
     std::shared_ptr<QMatrix> qinput_;
     std::shared_ptr<QMatrix> qoutput_;
-    
+
     std::shared_ptr<Model> model_;
-    
+
     std::atomic<int64_t> tokenCount;
     clock_t start;
     void signModel(std::ostream&);
@@ -54,18 +54,25 @@ class FastText {
     FastText();
 
     void getVector(Vector&, const std::string&) const;
+    void getVector(Vector&, int32_t) const;
     void saveVectors();
     void saveOutput();
     void saveModel();
+    void saveModel(int32_t);
+    void saveDict();
+
     void loadModel(const std::string&, const bool inference_mode = false, const int timeout_sec = -1);
     void loadModel(std::istream&);
     void loadModelForInference(std::istream&, const std::string&, const int);
+    void loadDict(const std::string&);
+    void loadDict(std::istream&);
     void printInfo(real, real);
 
     void supervised(Model&, real, const std::vector<int32_t>&,
                     const std::vector<int32_t>&);
     void cbow(Model&, real, const std::vector<int32_t>&);
     void sent2vec(Model&, real, const std::vector<int32_t>&);
+    void cbowCWNgrams(Model&, real, std::vector<int32_t>&);
     void skipgram(Model&, real, const std::vector<int32_t>&);
     std::vector<int32_t> selectEmbeddings(int32_t) const;
     void quantize(std::shared_ptr<Args>);
@@ -81,7 +88,14 @@ class FastText {
     void textVector(std::string, Vector&, std::vector<int32_t>&, std::vector<int32_t>&);
     void printWordVectors();
     void printSentenceVectors();
+    std::vector<std::string> getVocab();
+    std::vector<int64_t> getUnigramsCounts();
     void trainThread(int32_t);
+
+    void savedDictTrain(std::shared_ptr<Args>);
+    void trainDict(std::shared_ptr<Args>);
+
+
     void train(std::shared_ptr<Args>);
     void precomputeWordVectors(Matrix&);
     void precomputeSentenceVectors(Matrix&,std::ifstream&);

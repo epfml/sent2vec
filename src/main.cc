@@ -26,13 +26,14 @@ void printUsage() {
     << "  predict-prob            predict most likely labels with probabilities\n"
     << "  skipgram                train a skipgram model\n"
     << "  cbow                    train a cbow model\n"
+    << "  cbow-c+w-ngrams         train a cbow model augmented with character and word ngrams\n"
     << "  print-word-vectors      print word vectors given a trained model\n"
     << "  print-sentence-vectors  print sentence vectors given a trained model\n"
     << "  nn                      query for nearest neighbors\n"
     << "  nnSent                  query for nearest neighbors for sentences\n"
     << "  analogies               query for analogies\n"
     << "  analogiesSent           query for analogies for Sentences\n"
-    << std::endl;  
+    << std::endl;
 }
 
 void printQuantizeUsage() {
@@ -293,6 +294,20 @@ void train(int argc, char** argv) {
   fasttext.train(a);
 }
 
+void saveDict(int argc, char** argv) {
+  std::shared_ptr<Args> a = std::make_shared<Args>();
+  a->parseArgs(argc, argv);
+  FastText fasttext;
+  fasttext.trainDict(a);
+}
+
+void trainFromDict(int argc, char** argv) {
+  std::shared_ptr<Args> a = std::make_shared<Args>();
+  a->parseArgs(argc, argv);
+  FastText fasttext;
+  fasttext.savedDictTrain(a);
+}
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     printUsage();
@@ -300,10 +315,14 @@ int main(int argc, char** argv) {
   }
   std::string command(argv[1]);
   if (command == "skipgram" || command == "cbow" || command == "supervised" ||
-      command == "sent2vec") {
+      command == "sent2vec" || command == "cbow-c+w-ngrams") {
     train(argc, argv);
   } else if (command == "test") {
     test(argc, argv);
+  } else if (command == "saveDict") {
+    saveDict(argc, argv);
+  } else if (command == "sent2vecFromDict") {
+    trainFromDict(argc, argv);
   } else if (command == "quantize") {
     quantize(argc, argv);
   } else if (command == "print-word-vectors") {

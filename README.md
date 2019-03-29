@@ -34,7 +34,7 @@ import sent2vec
 model = sent2vec.Sent2vecModel()
 model.load_model('model.bin')
 emb = model.embed_sentence("once upon a time .") 
-embs = model.embed_sentences(["first sentence .", "another sentence"])  
+embs = model.embed_sentences(["first sentence .", "another sentence"])
 ```
 In order to compile and install the module, run the following from the project root folder:
 
@@ -55,6 +55,19 @@ model.load_model('model.bin', inference_mode=True)
 The model is loaded into a shared memory segment named after the model name. The model will stay in memory until you explicitely remove the shared memory segment. To do it from Python:
 ```python
 model.release_shared_mem('model.bin')
+```
+
+#### Obtaining word embeddings
+
+Some functionalities allow you to play with word embeddings obtained from `sent2vec` or `cbow-c+w-ngrams`:
+
+```python
+import sent2vec
+model = sent2vec.Sent2vecModel()
+model.load_model('model.bin')
+vocab = model.get_vocabulary() # return a dictionary with words and their frequency in the corpus
+uni_embs, vocab = model.get_unigram_embeddings() # return the full unigram embedding matrix
+uni_embs = model.embed_unigrams(['dog', 'cat']) # return unigram embeddings given a list of unigrams
 ```
 
 # Using Sentence level nearest neighbour search and analogies
@@ -100,11 +113,13 @@ Note: For `wikiTokenize.py`, set the `SNLP_TAGGER_JAR` parameter to be the path 
 
 # Training New Models
 
+## Sent2vec
+
 To train a new sent2vec model, you first need some large training text file. This file should contain one sentence per line. The provided code does not perform tokenization and lowercasing, you have to preprocess your input data yourself, see above.
 
 You can then train a new model. Here is one example of command:
 
-    ./fasttext sent2vec -input wiki_sentences.txt -output my_model -minCount 8 -dim 700 -epoch 9 -lr 0.2 -wordNgrams 2 -loss ns -neg 10 -thread 20 -t 0.000005 -dropoutK 4 -minCountLabel 20 -bucket 4000000
+    ./fasttext sent2vec -input wiki_sentences.txt -output my_model -minCount 8 -dim 700 -epoch 9 -lr 0.2 -wordNgrams 2 -loss ns -neg 10 -thread 20 -t 0.000005 -dropoutK 4 -minCountLabel 20 -bucket 4000000 -maxVocabSize 750000 -numCheckPoints 10
 
 Here is a description of all available arguments:
 
@@ -130,7 +145,15 @@ The following arguments are optional:
   -t                  sampling threshold [0.0001]
   -dropoutK           number of ngrams dropped when training a sent2vec model [2]
   -verbose            verbosity level [2]
+  -maxVocabSize       vocabulary exceeding this size will be truncated [None]
+  -numCheckPoints     number of intermediary checkpoints to save when training [1]
 ```
+
+## CBOW char + word ngrams
+
+Very similar to the sent2vec instructions. A plausible command would be:
+
+    ./fasttext cbow-c+w-ngrams -input wiki_sentences.txt -output my_model -lr 0.05 -dim 300 -ws 10 -epoch 9 -maxVocabSize 750000 -thread 20 -numCheckPoints 20 -t 0.0001 -neg 5 -bucket 4000000 -bucketChar 2000000 -wordNgrams 3 -minn 3 -maxn 6
 
 # References
 When using this code or some of our pre-trained models for your application, please cite the following paper:

@@ -2,7 +2,7 @@ import os.path
 import subprocess
 
 import numpy as np
-cimport numpy as cnp 
+cimport numpy as cnp
 
 from libcpp cimport bool
 from libcpp.string cimport string
@@ -11,59 +11,63 @@ from libcpp.vector cimport vector
 #from libc.stdlib cimport free
 #from cpython cimport PyObject, Py_INCREF
 
+ctypedef long int64_t
+
 cnp.import_array()
 
 cdef extern from "fasttext.h" namespace "fasttext":
 
     cdef cppclass FastText:
-        FastText() except + 
+        FastText() except +
         void loadModel(const string&, bool, int)
         void textVector(string, vector[float]&)
         void textVectors(vector[string]&, int, vector[float])#&)
         int getDimension()
+        vector[string]& getVocab()
+        vector[int64_t]& getUnigramsCounts()
 
 
-cdef extern from "asvoid.h": 
+cdef extern from "asvoid.h":
      void *asvoid(vector[float] *buf)
 
 
-class stdvector_base: 
-    pass 
+class stdvector_base:
+    pass
 
 
-cdef class vector_wrapper: 
-    cdef: 
-        vector[float] *buf 
+cdef class vector_wrapper:
+    cdef:
+        vector[float] *buf
 
     def __cinit__(vector_wrapper self, n):
-        self.buf = NULL 
+        self.buf = NULL
 
-    def __init__(vector_wrapper self, cnp.intp_t n): 
-        self.buf = new vector[float](n) 
+    def __init__(vector_wrapper self, cnp.intp_t n):
+        self.buf = new vector[float](n)
 
-    def __dealloc__(vector_wrapper self): 
-        if self.buf != NULL: 
-            del self.buf 
+    def __dealloc__(vector_wrapper self):
+        if self.buf != NULL:
+            del self.buf
 
-    def asarray(vector_wrapper self, cnp.intp_t n): 
-        """ 
-        Interpret the vector as np.ndarray without 
-        copying the data. 
-        """ 
-        base = stdvector_base() 
-        intbuf = <cnp.uintp_t> asvoid(self.buf) 
-        dtype = np.dtype(np.float32) 
-        base.__array_interface__ = dict( 
-            data = (intbuf, False), 
-            descr = dtype.descr, 
-            shape = (n,), 
-            strides = (dtype.itemsize,), 
-            typestr = dtype.str, 
-            version = 3, 
-        ) 
-        base.vector_wrapper = self 
-        return np.asarray(base) 
-        
+    def asarray(vector_wrapper self, cnp.intp_t n):
+        """
+        Interpret the vector as np.ndarray without
+        copying the data.
+        """
+        base = stdvector_base()
+        intbuf = <cnp.uintp_t> asvoid(self.buf)
+        dtype = np.dtype(np.float32)
+        base.__array_interface__ = dict(
+            data = (intbuf, False),
+            descr = dtype.descr,
+            shape = (n,),
+            strides = (dtype.itemsize,),
+            typestr = dtype.str,
+            version = 3,
+        )
+        base.vector_wrapper = self
+        return np.asarray(base)
+
 
 cdef class Sent2vecModel:
 
@@ -80,7 +84,7 @@ cdef class Sent2vecModel:
 
     def get_emb_size(self):
         return self._thisptr.getDimension()
-            
+
     def load_model(self, model_path, inference_mode=False, timeout_sec=-1):
         cdef string cmodel_path = model_path.encode('utf-8', 'ignore');
         cdef bool cinference_mode = inference_mode
@@ -94,14 +98,31 @@ cdef class Sent2vecModel:
         cdef int cnum_threads = num_threads
         for s in sentences:
             csentences.push_back(s.encode('utf-8', 'ignore'));
-        cdef vector_wrapper array 
+        cdef vector_wrapper array
         w = vector_wrapper(len(sentences) * self.get_emb_size())
         self._thisptr.textVectors(csentences, cnum_threads, w.buf[0])
-        final = w.asarray(len(sentences) * self.get_emb_size()) 
+        final = w.asarray(len(sentences) * self.get_emb_size())
         return final.reshape(len(sentences), self.get_emb_size())
 
     def embed_sentence(self, sentence, num_threads=1):
         return self.embed_sentences([sentence], num_threads)
+
+    def get_vocabulary(self):
+        vocab = list(self._thisptr.getVocab())
+        vocab = [w.decode('utf-8', 'ignore') for w in vocab]
+        freqs = list(self._thisptr.getUnigramsCounts())
+        assert len(vocab) == len(freqs)
+        return {w:c for w, c in zip(vocab, freqs)}
+
+    def get_unigram_embeddings(self):
+        vocab = list(self.get_vocabulary().items())
+        vocab.sort(key=lambda x: x[1], reverse=True)
+        vocab = [w for w, c in vocab]
+        return self.embed_sentences(vocab), vocab
+
+    def embed_unigrams(self, unigrams):
+        assert all(len(w.split(' ')) == 1 for w in unigrams)
+        return self.embed_sentences(unigrams)
 
     @staticmethod
     def release_shared_mem(model_path):
