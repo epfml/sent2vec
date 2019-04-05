@@ -237,7 +237,8 @@ void Args::save(std::ostream& out) {
   out.write((char*) &(loss), sizeof(loss_name));
   out.write((char*) &(model), sizeof(model_name));
   out.write((char*) &(bucket), sizeof(int));
-  out.write((char*) &(bucketChar), sizeof(int));
+  if (model == model_name::cbowCWNgrams)
+    out.write((char*) &(bucketChar), sizeof(int));
   out.write((char*) &(minn), sizeof(int));
   out.write((char*) &(maxn), sizeof(int));
   out.write((char*) &(lrUpdateRate), sizeof(int));
@@ -254,7 +255,8 @@ void Args::load(std::istream& in) {
   in.read((char*) &(loss), sizeof(loss_name));
   in.read((char*) &(model), sizeof(model_name));
   in.read((char*) &(bucket), sizeof(int));
-  in.read((char*) &(bucketChar), sizeof(int));
+  if (model == model_name::cbowCWNgrams)
+    in.read((char*) &(bucketChar), sizeof(int));
   in.read((char*) &(minn), sizeof(int));
   in.read((char*) &(maxn), sizeof(int));
   in.read((char*) &(lrUpdateRate), sizeof(int));
