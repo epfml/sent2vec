@@ -661,6 +661,25 @@ void FastText::printWordVectors() {
   wordVectors();
 }
 
+void FastText::printVocabularyVectors(bool input_matrix) {
+  std::vector<std::string> words = getVocab();
+  std::shared_ptr<Matrix> matrix = input_matrix ? input_ : output_;
+  Vector vec(args_->dim);
+  std::string word;
+  for(int i = 0; i < words.size(); i++) {
+    word = words[i];
+    const std::vector<int32_t> &ngrams = dict_->getNgrams(word);
+    vec.zero();
+    for (auto it = ngrams.begin(); it != ngrams.end(); ++it) {
+      vec.addRow(*matrix, *it);
+    }
+    if (ngrams.size() > 0) {
+      vec.mul(1.0 / ngrams.size());
+    }
+    std::cout << word << " " << " " << vec << std::endl;
+  }
+}
+
 void FastText::printSentenceVectors() {
   if (args_->model == model_name::sup || args_->model == model_name::sent2vec || args_->model == model_name::cbowCWNgrams) {
     textVectors();
