@@ -87,6 +87,7 @@ class FastText {
     void textVectors(std::vector<std::string>&, int, std::vector<real>&);
     void textVector(std::string, Vector&, std::vector<int32_t>&, std::vector<int32_t>&);
     void printWordVectors();
+    void printVocabularyVectors(bool);
     void printSentenceVectors();
     std::vector<std::string> getVocab();
     std::vector<int64_t> getUnigramsCounts();

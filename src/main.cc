@@ -18,21 +18,23 @@ void printUsage() {
   std::cerr
     << "usage: fasttext <command> <args>\n\n"
     << "The commands supported by fasttext are:\n\n"
-    << "  supervised              train a supervised classifier\n"
-    << "  sent2vec                train unsupervised sentence embeddings\n"
-    << "  quantize                quantize a model to reduce the memory usage\n"
-    << "  test                    evaluate a supervised classifier\n"
-    << "  predict                 predict most likely labels\n"
-    << "  predict-prob            predict most likely labels with probabilities\n"
-    << "  skipgram                train a skipgram model\n"
-    << "  cbow                    train a cbow model\n"
-    << "  cbow-c+w-ngrams         train a cbow model augmented with character and word ngrams\n"
-    << "  print-word-vectors      print word vectors given a trained model\n"
-    << "  print-sentence-vectors  print sentence vectors given a trained model\n"
-    << "  nn                      query for nearest neighbors\n"
-    << "  nnSent                  query for nearest neighbors for sentences\n"
-    << "  analogies               query for analogies\n"
-    << "  analogiesSent           query for analogies for Sentences\n"
+    << "  supervised                train a supervised classifier\n"
+    << "  sent2vec                  train unsupervised sentence embeddings\n"
+    << "  quantize                  quantize a model to reduce the memory usage\n"
+    << "  test                      evaluate a supervised classifier\n"
+    << "  predict                   predict most likely labels\n"
+    << "  predict-prob              predict most likely labels with probabilities\n"
+    << "  skipgram                  train a skipgram model\n"
+    << "  cbow                      train a cbow model\n"
+    << "  cbow-c+w-ngrams           train a cbow model augmented with character and word ngrams\n"
+    << "  print-word-vectors        print word vectors given a trained model\n"
+    << "  print-sentence-vectors    print sentence vectors given a trained model\n"
+    << "  print-vocabulary-vectors  print unigram vectors in vocabulary\n"
+    << "  print-vocabulary          print word in vocabulary with count\n"
+    << "  nn                        query for nearest neighbors\n"
+    << "  nnSent                    query for nearest neighbors for sentences\n"
+    << "  analogies                 query for analogies\n"
+    << "  analogiesSent             query for analogies for Sentences\n"
     << std::endl;
 }
 
@@ -70,6 +72,21 @@ void printPrintWordVectorsUsage() {
 void printPrintSentenceVectorsUsage() {
   std::cerr
     << "usage: fasttext print-sentence-vectors <model>\n\n"
+    << "  <model>      model filename\n"
+    << std::endl;
+}
+
+void printPrintVocabularyVectorsUsage() {
+  std::cerr
+    << "usage: fasttext print-vocabulary-vectors <model>\n\n"
+    << "  <model>      model filename\n"
+    << "  <matrix>     embedding matrix: input|output\n"
+    << std::endl;
+}
+
+void printPrintVocabularyUsage() {
+  std::cerr
+    << "usage: fasttext print-vocabulary <model>\n\n"
     << "  <model>      model filename\n"
     << std::endl;
 }
@@ -211,6 +228,38 @@ void printSentenceVectors(int argc, char** argv) {
   exit(0);
 }
 
+void printVocabularyVectors(int argc, char** argv) {
+  if (argc != 4) {
+    printPrintVocabularyVectorsUsage();
+    exit(EXIT_FAILURE);
+  }
+  std::string matrix_type = std::string(argv[3]);
+  if (matrix_type != "input" && matrix_type != "output") {
+    printPrintVocabularyVectorsUsage();
+    exit(EXIT_FAILURE);
+  }
+  FastText fasttext;
+  fasttext.loadModel(std::string(argv[2]));
+  fasttext.printVocabularyVectors(matrix_type == "input");
+  exit(0);
+}
+
+void printVocabulary(int argc, char** argv) {
+  if (argc != 3) {
+    printPrintVocabularyUsage();
+    exit(EXIT_FAILURE);
+  }
+
+  FastText fasttext;
+  fasttext.loadModel(std::string(argv[2]));
+  std::vector<std::string> vocabulary = fasttext.getVocab();
+  std::vector<int64_t> counts = fasttext.getUnigramsCounts();
+  for (int i = 0; i < vocabulary.size(); i++) {
+    std::cout << vocabulary[i] << " " << counts[i] << std::endl;
+  }
+  exit(0);
+}
+
 void printNgrams(int argc, char** argv) {
   if (argc != 4) {
     printPrintNgramsUsage();
@@ -329,6 +378,10 @@ int main(int argc, char** argv) {
     printWordVectors(argc, argv);
   } else if (command == "print-sentence-vectors") {
     printSentenceVectors(argc, argv);
+  } else if (command == "print-vocabulary-vectors") {
+    printVocabularyVectors(argc, argv);
+  } else if (command == "print-vocabulary") {
+    printVocabulary(argc, argv);
   } else if (command == "print-ngrams") {
     printNgrams(argc, argv);
   } else if (command == "nn") {

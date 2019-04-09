@@ -1,5 +1,6 @@
 import os.path
 import subprocess
+from collections import OrderedDict
 
 import numpy as np
 cimport numpy as cnp
@@ -112,12 +113,10 @@ cdef class Sent2vecModel:
         vocab = [w.decode('utf-8', 'ignore') for w in vocab]
         freqs = list(self._thisptr.getUnigramsCounts())
         assert len(vocab) == len(freqs)
-        return {w:c for w, c in zip(vocab, freqs)}
+        return OrderedDict(zip(vocab, freqs))
 
     def get_unigram_embeddings(self):
-        vocab = list(self.get_vocabulary().items())
-        vocab.sort(key=lambda x: x[1], reverse=True)
-        vocab = [w for w, c in vocab]
+        vocab = [w for w, c in self.get_vocabulary().items()]
         return self.embed_sentences(vocab), vocab
 
     def embed_unigrams(self, unigrams):
