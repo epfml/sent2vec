@@ -356,7 +356,7 @@ void Dictionary::addNgrams(std::vector<int32_t>& out, std::vector<int32_t>& line
   int32_t line_size = end - start;
   std::vector<bool> discard;
   discard.resize(line_size, false);
-  std::uniform_int_distribution<> uniform(0, line_size);
+  std::uniform_int_distribution<> uniform(0, line_size - 1);
   while (num_discarded < k && line_size - num_discarded > 2) {
     int32_t token_to_discard = uniform(rng);
     if (!discard[token_to_discard]) {
@@ -381,7 +381,7 @@ void Dictionary::addNgrams(std::vector<int32_t>& line, int32_t n, int32_t k, std
   int32_t line_size = line.size();
   std::vector<bool> discard;
   discard.resize(line_size, false);
-  std::uniform_int_distribution<> uniform(1, line_size);
+  std::uniform_int_distribution<> uniform(0, line_size - 1);
   while (num_discarded < k && line_size - num_discarded > 2) {
     int32_t token_to_discard = uniform(rng);
     if (!discard[token_to_discard]) {
