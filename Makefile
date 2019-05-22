@@ -11,6 +11,9 @@ CXX = c++
 CXXFLAGS = -pthread -std=c++0x
 OBJS = args.o dictionary.o productquantizer.o matrix.o shmem_matrix.o qmatrix.o vector.o model.o utils.o fasttext.o
 INCLUDES = -I.
+ifneq ($(shell uname),Darwin)
+	LINK_RT := -lrt
+endif
 
 opt: CXXFLAGS += -O3 -funroll-loops
 opt: fasttext
@@ -49,7 +52,7 @@ fasttext.o: src/fasttext.cc src/*.h
 	$(CXX) $(CXXFLAGS) -c src/fasttext.cc
 
 fasttext: $(OBJS) src/fasttext.cc
-	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o fasttext -lrt
+	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o fasttext $(LINK_RT)
 
 clean:
 	rm -rf *.o fasttext
