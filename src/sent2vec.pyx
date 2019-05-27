@@ -8,11 +8,10 @@ cimport numpy as cnp
 from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libc.stdint cimport int64_t
 
 #from libc.stdlib cimport free
 #from cpython cimport PyObject, Py_INCREF
-
-ctypedef long int64_t
 
 cnp.import_array()
 
