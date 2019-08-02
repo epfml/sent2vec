@@ -158,7 +158,7 @@ k is optional and is the number of nearest sentences that you want to output.
 
 # Unigram Embeddings 
 
-For the purpose of generating word representations, we compared word embeddings obtained training sent2vec models with other word embedding models, including a novel method we refer to as CBOW char + word ngrams (`cbow-c+w-ngrams`). This method augments fasttext char augmented CBOW with word n-grams. You can see the full comparison of results in [*this paper*](tbd). 
+For the purpose of generating word representations, we compared word embeddings obtained training sent2vec models with other word embedding models, including a novel method we refer to as CBOW char + word ngrams (`cbow-c+w-ngrams`). This method augments fasttext char augmented CBOW with word n-grams. You can see the full comparison of results in [*this paper*](https://www.aclweb.org/anthology/N19-1098). 
 
 ## Extracting Word Embeddings from Pre-Trained Models
 
@@ -186,7 +186,7 @@ Very similar to the sent2vec instructions. A plausible command would be:
     ./fasttext cbow-c+w-ngrams -input wiki_sentences.txt -output my_model -lr 0.05 -dim 300 -ws 10 -epoch 9 -maxVocabSize 750000 -thread 20 -numCheckPoints 20 -t 0.0001 -neg 5 -bucket 4000000 -bucketChar 2000000 -wordNgrams 3 -minn 3 -maxn 6
 
 # References
-When using this code or some of our pre-trained models for your application, please cite the following paper:
+When using this code or some of our pre-trained models for your application, please cite the following paper for sentence embeddings:
 
   Matteo Pagliardini, Prakhar Gupta, Martin Jaggi, [*Unsupervised Learning of Sentence Embeddings using Compositional n-Gram Features*](https://aclweb.org/anthology/N18-1049) NAACL 2018
 
@@ -196,5 +196,23 @@ When using this code or some of our pre-trained models for your application, ple
   author = {Pagliardini, Matteo and Gupta, Prakhar and Jaggi, Martin},
   booktitle={NAACL 2018 - Conference of the North American Chapter of the Association for Computational Linguistics},
   year={2018}
+}
+```
+
+For word embeddings:
+
+Prakhar Gupta, Matteo Pagliardini, Martin Jaggi, [*Better Word Embeddings by Disentangling Contextual n-Gram
+Information*](https://www.aclweb.org/anthology/N19-1098) NAACL 2019
+
+```
+@inproceedings{DBLP:conf/naacl/GuptaPJ19,
+  author    = {Prakhar Gupta and
+               Matteo Pagliardini and
+               Martin Jaggi},
+  title     = {Better Word Embeddings by Disentangling Contextual n-Gram Information},
+  booktitle = {{NAACL-HLT} {(1)}},
+  pages     = {933--939},
+  publisher = {Association for Computational Linguistics},
+  year      = {2019}
 }
 ```
