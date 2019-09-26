@@ -8,7 +8,7 @@
 #
 
 CXX = c++
-CXXFLAGS = -pthread -std=c++0x
+CXXFLAGS = -pthread -std=c++0x -fPIC -m64
 OBJS = args.o dictionary.o productquantizer.o matrix.o shmem_matrix.o qmatrix.o vector.o model.o utils.o fasttext.o
 INCLUDES = -I.
 ifneq ($(shell uname),Darwin)
@@ -54,5 +54,11 @@ fasttext.o: src/fasttext.cc src/*.h
 fasttext: $(OBJS) src/fasttext.cc
 	$(CXX) $(CXXFLAGS) $(OBJS) src/main.cc -o fasttext $(LINK_RT)
 
+sent2vec.o: $(OBJS) src/sent2vec.cc src/*.h
+	$(CXX) $(CXXFLAGS) -c src/sent2vec.cc
+
+so: $(OBJS) sent2vec.o
+	$(CXX) $(CXXFLAGS) $(OBJS) sent2vec.o -shared -o libsent2vec.so $(LINK_RT)
+
 clean:
-	rm -rf *.o fasttext
+	rm -rf *.o *.so fasttext
