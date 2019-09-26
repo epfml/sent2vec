@@ -1,0 +1,19 @@
+dist: xenial
+language: python
+python:
+  - 3.6
+  - 3.7
+
+#branches:
+#  only:
+#    - master
+cache:
+  directories:
+    - $HOME/.cache/pip
+install:
+  - pip install pipenv
+  - pipenv install
+script:
+  - make fasttext
+  #- make so
+  - pipenv run python setup.py build
