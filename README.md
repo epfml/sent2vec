@@ -1,6 +1,6 @@
 ## Updates 
 
-Code and pre-trained models related to the Bi-Sent2vec, [cross-lingual extension of Sent2Vec](https://arxiv.org/abs/1912.12481) can be found [here](https://github.com/epfml/Bi-sent2vec). 
+Code and pre-trained models related to the [Bi-Sent2vec](https://arxiv.org/abs/1912.12481), cross-lingual extension of Sent2Vec can be found [here](https://github.com/epfml/Bi-sent2vec). 
 
 # Sent2vec
 
