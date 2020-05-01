@@ -1,3 +1,7 @@
+## Updates 
+
+Code and pre-trained models related to the Bi-Sent2vec, [cross-lingual extension of Sent2Vec](https://arxiv.org/abs/1912.12481) can be found [here](https://github.com/epfml/Bi-sent2vec). 
+
 # Sent2vec
 
 TLDR: This library provides numerical representations (features) for words, short texts, or sentences, which can be used as input to any machine learning task. 
