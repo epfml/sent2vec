@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+# Strange file
+fasttext

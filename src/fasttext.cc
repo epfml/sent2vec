@@ -202,6 +202,7 @@ void FastText::saveModel(int32_t checkpoint) {
 
 void FastText::loadModel(const std::string& filename,
                          const bool inference_mode /* = false */,
+                         const bool shared_mem_enabled /* = true */,
                          const int timeout_sec /* = -1 */) {
   std::ifstream ifs(filename, std::ifstream::binary);
   if (!ifs.is_open()) {
@@ -213,14 +214,18 @@ void FastText::loadModel(const std::string& filename,
     exit(EXIT_FAILURE);
   }
   if (inference_mode) {
-    loadModelForInference(ifs, filename, timeout_sec);
+    if (shared_mem_enabled) {
+      loadModelWithSharedMemory(ifs, filename, timeout_sec);
+    } else {
+      loadModel(ifs, false);
+    }
   } else {
-    loadModel(ifs);
+    loadModel(ifs, true);
   }
   ifs.close();
 }
 
-void FastText::loadModel(std::istream& in) {
+void FastText::loadModel(std::istream& in, bool load_output_matrix /* = true */) {
   args_ = std::make_shared<Args>();
   dict_ = std::make_shared<Dictionary>(args_);
   input_ = std::make_shared<Matrix>();
@@ -240,11 +245,14 @@ void FastText::loadModel(std::istream& in) {
     input_->load(in);
   }
 
-  in.read((char*) &args_->qout, sizeof(bool));
-  if (quant_ && args_->qout) {
-    qoutput_->load(in);
-  } else {
-    output_->load(in);
+  // Only load qoutput_ and output_ matrices if explicitly requested
+  if (load_output_matrix) {
+      in.read((char*) &args_->qout, sizeof(bool));
+      if (quant_ && args_->qout) {
+        qoutput_->load(in);
+      } else {
+        output_->load(in);
+      }
   }
 
   model_ = std::make_shared<Model>(input_, output_, args_, 0);
@@ -271,9 +279,9 @@ static std::string basename(const std::string& filename) {
   return s;
 }
 
-void FastText::loadModelForInference(std::istream& in,
-                                     const std::string& filename,
-                                     const int timeout_sec) {
+void FastText::loadModelWithSharedMemory(std::istream& in,
+                                         const std::string& filename,
+                                         const int timeout_sec) {
   std::string shmem_name = "s2v_" + basename(filename) + "_input_matrix";
 
   args_ = std::make_shared<Args>();
