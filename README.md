@@ -32,6 +32,15 @@ A Cython module allows you to keep the model in memory while inferring sentence 
 pip install .
 ```
 
+## Note -  
+if you install sent2vec using
+
+```
+$ pip install sent2vec
+```
+
+then you'll get the wrong package. Please follow the instructions in the README.md to install it correctly.
+
 # Sentence Embeddings
 
 For the purpose of generating sentence representations, we introduce our sent2vec method and provide code and models. Think of it as an unsupervised version of [FastText](https://github.com/facebookresearch/fastText), and an extension of word2vec (CBOW) to sentences. 
@@ -220,3 +229,5 @@ Information*](https://www.aclweb.org/anthology/N19-1098) NAACL 2019
   year      = {2019}
 }
 ```
+
+
