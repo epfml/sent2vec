@@ -1,3 +1,7 @@
+## Updates 
+
+Code and pre-trained models related to the [Bi-Sent2vec](https://arxiv.org/abs/1912.12481), cross-lingual extension of Sent2Vec can be found [here](https://github.com/epfml/Bi-sent2vec). 
+
 # Sent2vec
 
 TLDR: This library provides numerical representations (features) for words, short texts, or sentences, which can be used as input to any machine learning task. 
@@ -27,6 +31,15 @@ A Cython module allows you to keep the model in memory while inferring sentence 
 ```
 pip install .
 ```
+
+## Note -  
+if you install sent2vec using
+
+```
+$ pip install sent2vec
+```
+
+then you'll get the wrong package. Please follow the instructions in the README.md to install it correctly.
 
 # Sentence Embeddings
 
@@ -216,3 +229,5 @@ Information*](https://www.aclweb.org/anthology/N19-1098) NAACL 2019
   year      = {2019}
 }
 ```
+
+
