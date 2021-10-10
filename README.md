@@ -94,12 +94,12 @@ cat text.txt | ./fasttext print-sentence-vectors model.bin
 
 ## Downloading Sent2vec Pre-Trained Models
 
-- [sent2vec_wiki_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSa19uYWlLUEkzX3c) 5GB (600dim, trained on english wikipedia)
-- [sent2vec_wiki_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSaER5YkJUdWdPWU0) 16GB (700dim, trained on english wikipedia)
-- [sent2vec_twitter_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSaVFLM0xJNk9DTzg) 13GB (700dim, trained on english tweets)
-- [sent2vec_twitter_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSeHI4cmdQdXpTRHc) 23GB (700dim, trained on english tweets)
-- [sent2vec_toronto books_unigrams](https://drive.google.com/open?id=0B6VhzidiLvjSOWdGM0tOX1lUNEk) 2GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
-- [sent2vec_toronto books_bigrams](https://drive.google.com/open?id=0B6VhzidiLvjSdENLSEhrdWprQ0k) 7GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
+- [sent2vec_wiki_unigrams](https://drive.google.com/file/d/0B6VhzidiLvjSa19uYWlLUEkzX3c/view?usp=sharing&resourcekey=0-p9iI_hJbCuNiUq5gWz7Qpg) 5GB (600dim, trained on english wikipedia)
+- [sent2vec_wiki_bigrams](https://drive.google.com/file/d/0B6VhzidiLvjSaER5YkJUdWdPWU0/view?usp=sharing&resourcekey=0-MVSyokxog2m4EQ4AGsssww) 16GB (700dim, trained on english wikipedia)
+- [sent2vec_twitter_unigrams](https://drive.google.com/file/d/0B6VhzidiLvjSaVFLM0xJNk9DTzg/view?usp=sharing&resourcekey=0--yCdYMEuuD2Ml7jIBhJiDw) 13GB (700dim, trained on english tweets)
+- [sent2vec_twitter_bigrams](https://drive.google.com/file/d/0B6VhzidiLvjSeHI4cmdQdXpTRHc/view?usp=sharing&resourcekey=0-5wNEK0boM-tRvmkCIb8Txw) 23GB (700dim, trained on english tweets)
+- [sent2vec_toronto books_unigrams](https://drive.google.com/file/d/0B6VhzidiLvjSOWdGM0tOX1lUNEk/view?usp=sharing&resourcekey=0-dQDQ3OZWooMbg-g48GRf1Q) 2GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
+- [sent2vec_toronto books_bigrams](https://drive.google.com/file/d/0B6VhzidiLvjSdENLSEhrdWprQ0k/view?usp=sharing&resourcekey=0-c1Qyo6RNF5TRsVzrNXhdRw) 7GB (700dim, trained on the [BookCorpus dataset](http://yknzhu.wixsite.com/mbweb))
 
 (as used in the NAACL2018 paper)
 
