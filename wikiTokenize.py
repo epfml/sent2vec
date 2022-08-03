@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
 import sys
-from nltk.tokenize.stanford import StanfordTokenizer
+try: 
+    from nltk.tokenize import StanfordTokenizer
+except:
+    from nltk.tokenize.stanford import StanfordTokenizer
 import re
 import os
 
